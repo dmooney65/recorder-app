@@ -12,6 +12,7 @@
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "flac-bindings": "^1.2.1",
+    "libao": "0.0.4",
     "mic": "^2.1.2",
     "morgan": "~1.9.0",
     "pug": "2.0.0-beta11",

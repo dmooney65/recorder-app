@@ -1,31 +1,42 @@
 var mic = require('mic');
 var fs = require('fs');
- 
-const Speaker = require('speaker');
-
+var flac = require('flac-bindings');
+const path = require('path');
+var Speaker = require('speaker');
 // Create the Speaker instance
-const speaker = new Speaker({
+
+var speaker = new Speaker({
  channels: 2,          // 2 channels
  bitDepth: 16,         // 16-bit samples
- sampleRate: 48000     // 44,100 Hz sample rate
+ sampleRate: 44100     // 44,100 Hz sample rate
 });
 
+var libao = require('libao');
+
+// Create the libao instance
+var ao = new libao({
+  channels: 2,          // 2 channels
+  bitDepth: 16,         // 16-bit samples
+  sampleRate: 44100     // 44,100 Hz sample rate
+});
+
+
 var micInstance = mic({
-    rate: '48000',
+    rate: '44100',
     channels: '2',
     bitwidth: 16,
     //debug: true,
-    device: 'default',
+    device: 'plughw:pisound,0',
     exitOnSilence: 6
 });
 
 
 var micInputStream = micInstance.getAudioStream();
  
-var outputFileStream = fs.WriteStream('output.raw');
+var outputFile = new flac.FileEncoder({ samplerate: 44100, bitsPerSample:16, file: path.normalize('/home/pi/Music/output.flac')});
  
-micInputStream.pipe(speaker);
-micInputStream.pipe(outputFileStream);
+//micInputStream.pipe(speaker);
+micInputStream.pipe(outputFile);
  
 micInputStream.on('data', function(data) {
     //console.log("Recieved Input Stream: " + data.length);
@@ -57,7 +68,7 @@ micInputStream.on('resumeComplete', function() {
     console.log("Got SIGNAL resumeComplete");
     setTimeout(function() {
         micInstance.stop();
-    }, 50000);
+    }, 15000);
 });
  
 micInputStream.on('silence', function() {
