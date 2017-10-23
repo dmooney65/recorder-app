@@ -13,7 +13,7 @@ module.exports = () => {
 
     let play = () => {
         if (!this.arecord) {
-            this.arecord = execStream('arecord', ['-f', 'dat']);
+            this.arecord = execStream('arecord', ['-f', 'S16_LE', '-c', '2', '-r', '48000']);
             this.aplay = execStream('aplay', []);
         } else {
             this.arecord.unpipe(devnull);
@@ -42,7 +42,7 @@ module.exports = () => {
 
     let startRecord = () => {
         console.log('recording to '+__dirname);
-        this.fileWriter = new flac.FileEncoder({ samplerate: 48000, bitsPerSample: 16, compression: 6, file: path.join(__dirname, '/out.flac') });        
+        this.fileWriter = new flac.FileEncoder({ samplerate: 48000, bitsPerSample: 16, file: path.join(__dirname, '/out.flac') });        
         this.arecord.pipe(this.fileWriter);
         recording = true;
     };
