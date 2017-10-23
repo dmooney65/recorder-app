@@ -1,4 +1,5 @@
 
+
 let isPlaying = false;
 let setPlaying = (playing) => {
     if (!playing) {
@@ -15,25 +16,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-let doPost = ( function(action) {
-    $.ajax({
-        type: 'POST',
-        url: 'http://zen:3000/audio/'+action
-    });
-});
+
 
 
 let initListeners = (function () {
+
+    var hostname = $('#hostname').text();
+    console.log(hostname);
+
+    var doPost = ( function(action) {
+        $.ajax({
+            type: 'POST',
+            url: 'http://'+hostname+':3000/audio/'+action
+        });
+    });
+
     $('#play-pause').click(function () {
         if (!isPlaying) {
-            doPost('play')
+            doPost('play');
             setPlaying(true);
 
         } else {
-            $.ajax({
-                type: 'POST',
-                url: 'http://zen:3000/audio/stop'
-            });
+            doPost('stop');
             setPlaying(false);
         }
     });
@@ -41,16 +45,12 @@ let initListeners = (function () {
     $('#record').click(function () {
         var btn = $(this);
         if (!btn.hasClass('text-success')) {
-            $.ajax({
-                type: 'POST',
-                url: 'http://zen:3000/audio/startRecord'
-            });
+            doPost('startRecord');
+            
             btn.addClass('text-success');
         } else {
-            $.ajax({
-                type: 'POST',
-                url: 'http://zen:3000/audio/stopRecord'
-            });
+            doPost('stopRecord');
+            
             btn.removeClass('text-success');
         }
     });

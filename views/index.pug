@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  p(id="hostname" hidden)= hostname
+
+  div.container
+    div.top Top of page
+    div.btn-group.btn-group-justified
+        a.btn.btn-default(id="play-pause" data-toggle="tooltip" data-placement="left" title="Play/pause audio")
+            span.glyphicon.glyphicon-play
+        a.btn.btn-default(id="record" data-toggle="tooltip" data-placement="left" title="Record audio")
+            span.glyphicon.glyphicon-record
+        a.btn.btn-default(id="mute" data-toggle="tooltip" data-placement="left" title="Mute/unmute audio")
+            span.mdi.mdi-volume-off.mdi-lg
+    
+    div.footer Footer

@@ -1,11 +1,28 @@
-var path = require('path'),
-    express = require('express');
+var path = require('path');
+var express = require('express');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
+var index = require('./routes/index');
+var users = require('./routes/users');
 
 var app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+const os = require('os');
+app.locals.hostname = os.hostname();
 //app.set('view engine', 'html');
 //Serving the files on the dist folder
-app.use(express.static(path.join(__dirname, 'src')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/bootstrap')));
 app.use('/css', express.static(path.join(__dirname, '/stylesheets')));
 app.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dist')));
@@ -39,11 +56,17 @@ var controls = function (req, res) {
 
 app.post('/audio/:function', controls);
 
+app.use('/', index);
 
+/*app.get('/', (req, res) => {
+    res.render('index', {
+        user: req.user
+    });
+});*/
 //Send index.html when the user access the web
-app.get('/', function (req, res) {
-    res.sendFile('index.html');
-});
+//app.get('/', function (req, res) {
+//    res.sendFile('index.html');
+//});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -60,10 +83,15 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.json({
-        message: err.message,
-        error: err
-    });
+    res.render('error');
 });
 
-app.listen(3000);
+var listener = app.listen(3000);
+
+//module.exports = listener;
+
+//var listener = require('./../server.js');
+var address = listener.address();
+var host = address.address;
+var port = address.port;
+console.log('Listening on ' + host + ':' + port);
