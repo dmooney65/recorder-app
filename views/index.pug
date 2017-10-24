@@ -5,12 +5,17 @@ block content
 
   div.container
     div.top Top of page
+    audio(id="player" controls=true)
+    canvas(id="meter" width="500" height="50")
+    a.btn.btn-default
+        span.text-success(id='meter')
+        //canvas
     div.btn-group.btn-group-justified
         a.btn.btn-default(id="play-pause" data-toggle="tooltip" data-placement="left" title="Play/pause audio")
             span.glyphicon.glyphicon-play
         a.btn.btn-default(id="record" data-toggle="tooltip" data-placement="left" title="Record audio")
             span.glyphicon.glyphicon-record
-        a.btn.btn-default(id="mute" data-toggle="tooltip" data-placement="left" title="Mute/unmute audio")
-            span.mdi.mdi-volume-off.mdi-lg
+        a.btn.btn-default(id="localaudio" data-toggle="tooltip" data-placement="left" title="Visualize audio")
+            span.glyphicon.glyphicon-signal
     
     div.footer Footer

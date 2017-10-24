@@ -1,14 +1,5 @@
 
 
-let isPlaying = false;
-let setPlaying = (playing) => {
-    if (!playing) {
-        $('#play-pause').find('span').removeClass('glyphicon-stop').addClass('glyphicon-play');
-    } else {
-        $('#play-pause').find('span').removeClass('glyphicon-play').addClass('glyphicon-stop');
-    }
-    isPlaying = playing;
-};
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -16,26 +7,71 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+let setPlaying = (playing) => {
+    if (!playing) {
+        $('#play-pause').find('span').removeClass('glyphicon-stop').addClass('glyphicon-play');
+    } else {
+        $('#play-pause').find('span').removeClass('glyphicon-play').addClass('glyphicon-stop');
+    }
+};
 
+let setRecording = (recording) => {
+    if (!recording) {
+        $('#record').find('span').removeClass('text-success');
+    } else {
+        $('#record').find('span').addClass('text-success');
+    }
+};
 
+let setServing = (serving) => {
+    if (!serving) {
+        $('#localaudio').find('span').removeClass('text-success');
+    } else {
+        $('#localaudio').find('span').addClass('text-success');
+    }
+};
 
 let initListeners = (function () {
 
     var hostname = $('#hostname').text();
-    console.log(hostname);
+    var audio = document.getElementById('player');
+    audio.crossOrigin = 'anonymous';
+    var context;
+    var meter = null;
+    var canvasContext = null;
+    var WIDTH=500;
+    var HEIGHT=50;
+    var rafID = null;
 
-    var doPost = ( function(action) {
+    var doPost = (function (action) {
         $.ajax({
             type: 'POST',
-            url: 'http://'+hostname+':3000/audio/'+action
+            url: 'http://' + hostname + ':3000/audio/' + action,
+            success: function (data) {
+                setStatus(data);
+            },
+            error: function (error) {
+                console.log(error);
+            }
         });
     });
 
+    window.setInterval(function () {
+        doPost('getStatus');
+    }, 1000);
+
+
+    let setStatus = (status) => {
+        setPlaying(status['playing']);
+        setRecording(status['recording']);
+        setServing(status['serving']);
+    };
+
     $('#play-pause').click(function () {
-        if (!isPlaying) {
+        //console.log($(this).find('span'));
+        if (!$(this).find('span').hasClass('glyphicon-stop')) {
             doPost('play');
             setPlaying(true);
-
         } else {
             doPost('stop');
             setPlaying(false);
@@ -43,16 +79,71 @@ let initListeners = (function () {
     });
 
     $('#record').click(function () {
-        var btn = $(this);
-        if (!btn.hasClass('text-success')) {
+        var span = $(this).find('span');
+        if (!span.hasClass('text-success')) {
             doPost('startRecord');
-            
-            btn.addClass('text-success');
+            setRecording(true);
         } else {
             doPost('stopRecord');
-            
-            btn.removeClass('text-success');
+            setRecording(false);
         }
     });
+
+    $('#localaudio').click(function () {
+        var span = $(this).find('span');
+        if (!span.hasClass('text-success')) {
+            doPost('startServer');
+            setServing(true);
+            if (!context) {
+                setupAudioContext();
+
+            }
+            audio.src = 'http://' + hostname + ':3080';
+            audio.play();
+        } else {
+            doPost('stopServer');
+            //audio.pause();
+            setServing(false);
+        }
+    });
+
+    function setupAudioContext() {
+        // Create a new <audio> tag.
+        canvasContext = document.getElementById('meter').getContext('2d');
+        context = new (window.AudioContext || window.webkitAudioContext)();
+        var source = context.createMediaElementSource(audio);
+        var analyser = context.createAnalyser();
+        meter = createAudioMeter(context,0.99,0.50,500);
+        source.connect(meter);
+        drawLoop();        
+        
+        //var filter = context.createBiquadFilter();
+        //filter.type = 'highpass';
+        //filter.frequency.value = 500;
+
+        // Connect the audio graph.
+        source.connect(analyser);
+        analyser.connect(context.destination);
+    }
+
+    function drawLoop( time ) {
+        // clear the background
+        canvasContext.clearRect(0,0,WIDTH,HEIGHT);
+    
+        // check if we're currently clipping
+        if (meter.checkClipping())
+            canvasContext.fillStyle = 'red';
+        else
+            canvasContext.fillStyle = 'green';
+    
+        // draw a bar based on the current volume
+        canvasContext.fillRect(0, 0, meter.volume*WIDTH*1.4, HEIGHT);
+    
+        // set up the next visual callback
+        rafID = window.requestAnimationFrame( drawLoop );
+    }
+
 });
+
+
 

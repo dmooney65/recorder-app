@@ -20,8 +20,7 @@ app.use(cookieParser());
 
 const os = require('os');
 app.locals.hostname = os.hostname();
-//app.set('view engine', 'html');
-//Serving the files on the dist folder
+//Serving the files on the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/bootstrap')));
 app.use('/css', express.static(path.join(__dirname, '/stylesheets')));
@@ -30,26 +29,10 @@ app.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dis
 var player = require('./src/audioController.js')();
 
 var controls = function (req, res) {
-    // ... perform some operations
     console.log(req.params);
-    var func = req.params['function'];
-    if (func == 'play') {
-        console.log('playing');
-        player.play();
-    }
-    if (func == 'stop') {
-        console.log('stopping');
-        player.stop();
-    }
-    if (func == 'startRecord') {
-        console.log('starting Recording');
-        player.startRecord();
-    }
-    if (func == 'stopRecord') {
-        console.log('stopping Recording');
-        player.stopRecord();
-    }
-    res.send('success');
+    //Execute player function based on param
+    var response = player[req.params['function']]();
+    res.send(response);
     //next(); // Call next() so Express will call the next middleware function in the chain.
 };
 
