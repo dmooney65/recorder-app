@@ -1,7 +1,20 @@
 html, body {
     height: 100%;
-  }
+}
 
+canvas { 
+    width: 100%;
+    height: auto;
+}
+
+audio {
+    width: 100%;
+    height: auto;
+}
+
+.meter {
+    height:50px;
+}
 .container-fixed {
     margin-right: auto;
     margin-left: auto;
@@ -49,9 +62,9 @@ html, body {
     color: rgb(182, 189, 172);
   }
 
-  .footer {
+.footer {
     position: absolute;
     bottom: 0;
-    height: 60px;
-    line-height: 60px;
+    height: 20px;
+    line-height: 20px;
 }

@@ -39,7 +39,7 @@ let initListeners = (function () {
     var context;
     var meter = null;
     var canvasContext = null;
-    var WIDTH=500;
+    var WIDTH=300;
     var HEIGHT=50;
     var rafID = null;
 
@@ -50,8 +50,8 @@ let initListeners = (function () {
             success: function (data) {
                 setStatus(data);
             },
-            error: function (error) {
-                console.log(error);
+            error: function (err) {
+                throw err;
             }
         });
     });
@@ -113,7 +113,7 @@ let initListeners = (function () {
         context = new (window.AudioContext || window.webkitAudioContext)();
         var source = context.createMediaElementSource(audio);
         var analyser = context.createAnalyser();
-        meter = createAudioMeter(context,0.99,0.50,500);
+        meter = createAudioMeter(context,0.99,0.05,500);
         source.connect(meter);
         drawLoop();        
         

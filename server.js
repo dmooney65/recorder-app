@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var audio = require('./src/audioController.js');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -26,10 +27,10 @@ app.use('/bootstrap', express.static(path.join(__dirname, '/bootstrap')));
 app.use('/css', express.static(path.join(__dirname, '/stylesheets')));
 app.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dist')));
 
-var player = require('./src/audioController.js')();
+var player = audio.Player({bitDepth: 24, sampleRate: 48000});
 
 var controls = function (req, res) {
-    console.log(req.params);
+    //console.log(req.params);
     //Execute player function based on param
     var response = player[req.params['function']]();
     res.send(response);
