@@ -21,16 +21,16 @@ module.exports.Player = (options) => {
     opts.sampleFormat = Number(opts.bitDepth) == 16 ? 'S16_LE' : 'S24_LE';
     console.log(opts.sampleFormat);
     opts.inputAs32 = Number(opts.bitDepth) == 16 ? false : true;
-    console.log(opts.inputAs32);    
+    console.log(opts.inputAs32);
 
 
     let play = () => {
-        if (!this.arecord) {
-            this.arecord = execStream('arecord', ['-f', opts.sampleFormat, '-c', opts.channels, '-r', opts.sampleRate]);
-            this.aplay = execStream('aplay', []);
-        } else {
-            this.arecord.unpipe(devnull);
-        }
+        //if (!this.arecord) {
+        this.arecord = execStream('arecord', ['-f', opts.sampleFormat, '-c', opts.channels, '-r', opts.sampleRate]);
+        this.aplay = execStream('aplay', []);
+        //} else {
+        //    this.arecord.unpipe(devnull);
+        //}
         this.arecord.pipe(this.aplay);
         playing = true;
         return getStatus();
@@ -38,14 +38,18 @@ module.exports.Player = (options) => {
 
     let stop = () => {
         //this.arecord.pause();
-        this.arecord.unpipe(this.aplay);
-        this.arecord.pipe(devnull);
         if (recording) {
             stopRecord();
         }
         if (serving) {
             stopServer();
         }
+        this.arecord.unpipe(this.aplay);
+        //this.arecord.pipe(devnull);
+        this.arecord.end();
+        var kill = execStream('killall', ['arecord']);
+        kill.end();
+        this.aplay.end();
         playing = false;
         return getStatus();
     };

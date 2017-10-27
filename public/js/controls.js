@@ -1,37 +1,45 @@
 
-
+let playPauseBtn;
+let recordingBtn;
+let localAudioBtn;
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    initListeners(); // add listers
+    playPauseBtn = $('#play-pause');
+    recordingBtn = $('#record');
+    localAudioBtn = $('#localaudio');
+    initControls(); // add listers
 
 });
 
 let setPlaying = (playing) => {
     if (!playing) {
-        $('#play-pause').find('span').removeClass('glyphicon-stop').addClass('glyphicon-play');
+        playPauseBtn.find('span').removeClass('glyphicon-stop').addClass('glyphicon-play');
     } else {
-        $('#play-pause').find('span').removeClass('glyphicon-play').addClass('glyphicon-stop');
+        playPauseBtn.find('span').removeClass('glyphicon-play').addClass('glyphicon-stop');
     }
 };
 
 let setRecording = (recording) => {
     if (!recording) {
-        $('#record').find('span').removeClass('text-success');
+        recordingBtn.find('span').removeClass('text-success');
     } else {
-        $('#record').find('span').addClass('text-success');
+        recordingBtn.find('span').addClass('text-success');
     }
 };
 
 let setServing = (serving) => {
     if (!serving) {
-        $('#localaudio').find('span').removeClass('text-success');
+        localAudioBtn.find('span').removeClass('text-success');
     } else {
-        $('#localaudio').find('span').addClass('text-success');
+        localAudioBtn.find('span').addClass('text-success');
     }
 };
 
-let initListeners = (function () {
+let initControls = (function () {
+
+    setupNav(0);
+
 
     var hostname = $('#hostname').text();
     var audio = document.getElementById('player');
@@ -46,7 +54,8 @@ let initListeners = (function () {
     var doPost = (function (action) {
         $.ajax({
             type: 'POST',
-            url: 'http://' + hostname + ':3000/audio/' + action,
+            data: { 'command': action },
+            url: '/audio',
             success: function (data) {
                 setStatus(data);
             },
@@ -67,18 +76,19 @@ let initListeners = (function () {
         setServing(status['serving']);
     };
 
-    $('#play-pause').click(function () {
-        //console.log($(this).find('span'));
+    playPauseBtn.click(function () {
         if (!$(this).find('span').hasClass('glyphicon-stop')) {
             doPost('play');
             setPlaying(true);
+            disableSecondary(true);                    
         } else {
             doPost('stop');
             setPlaying(false);
+            disableSecondary(false);                    
         }
     });
 
-    $('#record').click(function () {
+    recordingBtn.click(function () {
         var span = $(this).find('span');
         if (!span.hasClass('text-success')) {
             doPost('startRecord');
@@ -89,14 +99,13 @@ let initListeners = (function () {
         }
     });
 
-    $('#localaudio').click(function () {
+    localAudioBtn.click(function () {
         var span = $(this).find('span');
         if (!span.hasClass('text-success')) {
             doPost('startServer');
             setServing(true);
             if (!context) {
                 setupAudioContext();
-
             }
             audio.src = 'http://' + hostname + ':3080';
             audio.play();

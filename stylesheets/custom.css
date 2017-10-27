@@ -1,13 +1,21 @@
 html, body {
     height: 100%;
 }
+.container-canvas {
+    /* This could be done in one single declaration. See the extended sample. */
+    /*margin-right: auto;*/
+    /*margin-left: auto;*/
+    width: auto;
+}
 
-canvas { 
+canvas {
+    margin-top: 30px;        
     width: 100%;
     height: auto;
 }
 
 audio {
+    margin-top: 30px;        
     width: 100%;
     height: auto;
 }
@@ -64,7 +72,7 @@ audio {
 
 .footer {
     position: absolute;
-    bottom: 0;
+    bottom: 10px;
     height: 20px;
     line-height: 20px;
 }

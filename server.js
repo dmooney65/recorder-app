@@ -4,16 +4,18 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var audio = require('./src/audioController.js');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var settings = require('./routes/settings');
+var recordings = require('./routes/recordings');
+
 
 var app = express();
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use(favicon(path.join(__dirname, 'public', '/images/favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -27,20 +29,11 @@ app.use('/bootstrap', express.static(path.join(__dirname, '/bootstrap')));
 app.use('/css', express.static(path.join(__dirname, '/stylesheets')));
 app.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dist')));
 
-var player = audio.Player({bitDepth: 24, sampleRate: 48000});
-
-var controls = function (req, res) {
-    //console.log(req.params);
-    //Execute player function based on param
-    var response = player[req.params['function']]();
-    res.send(response);
-    //next(); // Call next() so Express will call the next middleware function in the chain.
-};
-
-
-app.post('/audio/:function', controls);
 
 app.use('/', index);
+app.use('/settings', settings);
+app.use('/recordings', recordings);
+
 
 /*app.get('/', (req, res) => {
     res.render('index', {

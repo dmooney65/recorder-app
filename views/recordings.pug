@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    include nav.pug
+
+    append head
+        script(src='/js/recordings.js')
+        
+    div.container
+        div.page-header Manage Recordings
+
+    include footer.pug

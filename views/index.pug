@@ -1,19 +1,17 @@
 extends layout
 
 block content
+    include nav.pug
+
     p(id="hostname" hidden)= hostname
-    audio(id="player")
     div.container
-        h1 Top of page
-        div.row
-            div.col-xs-auto.col-sm-6
-                canvas.meter(id="meter" height:50)
-                div.btn-group.btn-group-justified
-                    a.btn.btn-default(id="play-pause" data-toggle="tooltip" data-placement="left" title="Play/pause audio")
-                        span.glyphicon.glyphicon-play
-                    a.btn.btn-default(id="record" data-toggle="tooltip" data-placement="left" title="Record audio")
-                        span.glyphicon.glyphicon-record
-                    a.btn.btn-default(id="localaudio" data-toggle="tooltip" data-placement="left" title="Visualize audio")
-                        span.glyphicon.glyphicon-signal
+        div.page-header Main Controls
     
-    div.footer Footer
+
+    block append head
+        script(src='/js/controls.js')
+        script(src='/js/volume-meter.js')
+
+    include controls.pug
+                
+    include footer.pug

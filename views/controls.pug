@@ -1,0 +1,14 @@
+div.container
+    div.row
+        div.col-xs-auto.col-sm-6
+            div.container-canvas
+                canvas.meter(id="meter" height:50)
+            div.container-canvas
+                audio(id="player" controls)
+            div.btn-group.btn-group-justified
+                a.btn.btn-default.btn-lg(id="play-pause" data-toggle="tooltip" data-placement="left" title="Play/pause audio")
+                    span.glyphicon.glyphicon-play
+                a.btn.btn-default.btn-lg(id="record" data-toggle="tooltip" data-placement="left" title="Record audio")
+                    span.glyphicon.glyphicon-record
+                a.btn.btn-default.btn-lg(id="localaudio" data-toggle="tooltip" data-placement="left" title="Visualize audio")
+                    span.glyphicon.glyphicon-signal
