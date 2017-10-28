@@ -1,14 +1,14 @@
 const os = require('os');
 const http = require('http');
 
-module.exports.Server = (port, writer) => {
+module.exports.Server = (port, writer, sampleRate) => {
     
     let server;
     
     let createServer = () => {
         server = http.createServer(function (req, res) {
             res.writeHead(200, {
-                'Content-Type': 'audio/flac,rate=48000;channels=2',
+                'Content-Type': 'audio/flac,rate='+sampleRate+';channels=2',
                 'transferMode.dlna.org': 'Streaming',
                 'Cache-Control': 'no-cache',
                 'pragma': 'no-cache',

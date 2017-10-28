@@ -84,7 +84,7 @@ module.exports.Player = () => {
             samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'),
             compressionLevel: settings.get('compressionLevel')
         });
-        this.server = audioServer.Server(3080, this.streamWriter);
+        this.server = audioServer.Server(3080, this.streamWriter, settings.get('sampleRate'));
         this.server.start();
         //this.arecord.unpipe(this.aplay);
         this.arecord.pipe(this.streamWriter);

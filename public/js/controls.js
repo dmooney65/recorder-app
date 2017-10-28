@@ -67,7 +67,7 @@ let initControls = (function () {
 
     window.setInterval(function () {
         doPost('getStatus');
-    }, 1000);
+    }, 2000);
 
 
     let setStatus = (status) => {
