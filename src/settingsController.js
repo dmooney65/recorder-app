@@ -26,7 +26,6 @@ module.exports = () => {
     };
 
     let get = (setting) => {
-        console.log('getAll');
         return settings[setting];
     };
 

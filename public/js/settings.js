@@ -35,8 +35,9 @@ let initSettings = (function () {
     $('#save').click(function (e) {
         e.preventDefault();
         var sampling = sampleRate.val().split('/');
-        var action = { 'command': 'set', 'bitDepth': sampling[0], 'sampleRate': sampling[1] };
+        var action = { 'command': 'set', 'bitDepth': sampling[0], 'sampleRate': sampling[1], 'compressionLevel': 5 };
         doPost(action);
+        createMessage('Settings Saved');
     });
     //var settings = fs.createReadStream()
 
