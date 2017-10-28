@@ -43,7 +43,7 @@ let initControls = (function () {
 
     var hostname = $('#hostname').text();
     var audio = document.getElementById('player');
-    audio.crossOrigin = 'anonymous';
+    //audio.crossOrigin = 'anonymous';
     var context;
     var meter = null;
     var canvasContext = null;
