@@ -9,8 +9,6 @@ var index = require('./routes/index');
 var settings = require('./routes/settings');
 var recordings = require('./routes/recordings');
 var usbDetect = require('usb-detection');
-var usb = require('usb');
-
 
 var app = express();
 
