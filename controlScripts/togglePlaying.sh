@@ -1,16 +1,20 @@
 #!/bin/bash
 
-./led.sh
+#source ./led.sh
+source /usr/local/pisound/scripts/common/common.sh
 
 STATUS=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".playing"`
 
 
 if [ "${STATUS}" == true ]; then
     COMMAND='stop'
+    flash_leds 30
 else
     COMMAND='play'
+    flash_leds 10
+    sleep 0.5
+    flash_leds 10
 fi
 
 curl -s --data "command=$COMMAND" http://localhost:3000/audio
 
-flash_leds 100
