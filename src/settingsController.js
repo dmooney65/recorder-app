@@ -5,21 +5,41 @@ const filePath = path.join(__dirname, '../settings.json');
 
 var settings;
 
-let readSettings = () => {
-    return JSON.parse(
-        fs.readFileSync(filePath, 'utf8', function (err) {
-            if (err) {
-                fs.copyFileSync(path.join(__dirname, '../settingsDefault.json'), path.join(__dirname, '../settings.json'));
-                fs.readFileSync(path.join(__dirname, '../settings.json'));
-            }
-        })
-    );
+fs.readFileAsync = function (filename) {
+    return new Promise(function (resolve, reject) {
+        fs.readFile(filename, function (err, data) {
+            if (err)
+                reject(err);
+            else
+                resolve(data);
+        });
+    });
+};
+
+fs.writeFileAsync = function (filename, content) {
+    return new Promise(function (resolve, reject) {
+        fs.writeFile(filename, content, function (err) {
+            if (err)
+                reject(err);
+            else
+                resolve();
+        });
+    });
 };
 
 module.exports = () => {
 
 
-    settings = readSettings();
+    let readSettings = () => {
+        settings = fs.readFileAsync(filePath).then(
+            function (data) {
+                settings = JSON.parse(data);
+                return settings;
+            }
+        );
+    };
+
+    readSettings();
 
     let getAll = () => {
         return settings;
@@ -34,12 +54,11 @@ module.exports = () => {
     };
 
     let save = () => {
-        fs.writeFileSync(filePath, JSON.stringify(settings), function (err) {
-            if (err) {
-                throw err;
+        fs.writeFileAsync(filePath, JSON.stringify(settings)).then(
+            function () {
+                readSettings();
             }
-            settings = readSettings();
-        });
+        );
         return settings;
     };
 

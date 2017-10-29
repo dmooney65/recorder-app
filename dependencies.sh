@@ -1,2 +1,1 @@
-sudo apt install libflac8
-sudo apt install libudev-dev
+sudo apt install -y libflac8 libudev-dev jq pmount
