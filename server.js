@@ -8,7 +8,6 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var settings = require('./routes/settings');
 var recordings = require('./routes/recordings');
-//var usbDetect = require('usb-detection');
 
 var app = express();
 
@@ -62,32 +61,6 @@ var host = address.address;
 var port = address.port;
 console.log('Listening on ' + host + ':' + port);
 
-let dec2hex = (num) => {
-    return parseInt(num, 10).toString(16);    
-};
-
-// Detect add/insert
-/*usbDetect.on('add', function (device) {
-    console.log('add', device);
-    console.log(device.vendorId);
-    console.log(dec2hex(device.vendorId));
-    console.log(device.productId);
-    console.log(dec2hex(device.productId));    
-});*/
-//usbDetect.on('add:vid', function(device) { console.log('add', device); });
-//usbDetect.on('add:vid:pid', function(device) { console.log('add', device); });
-
-// Detect remove
-//usbDetect.on('remove', function (device) { console.log('remove', device); });
-//usbDetect.on('remove:vid', function(device) { console.log('remove', device); });
-//usbDetect.on('remove:vid:pid', function(device) { console.log('remove', device); });
-
-// Detect add or remove (change)
-//usbDetect.on('change', function (device) { console.log('change', device); });
-//usbDetect.on('change:vid', function(device) { console.log('change', device); });
-//usbDetect.on('change:vid:pid', function(device) { console.log('change', device); });
-
-// Get a list of USB devices on your system, optionally filtered by `vid` or `pid`
-//usbDetect.find(function (err, devices) { console.log('find', devices, err); });
-//usbDetect.find(vid, function(err, devices) { console.log('find', devices, err); });
-//usbDetect.find(vid, pid, function(err, devices) { console.log('find', devices, err); });
+//let dec2hex = (num) => {
+//    return parseInt(num, 10).toString(16);    
+//};
