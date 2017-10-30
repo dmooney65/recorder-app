@@ -71,10 +71,11 @@ module.exports.Player = () => {
     };
 
     let startRecord = () => {
+        console.log(path.join(filePath, getDateStr(), '_recording.flac'));
         this.fileWriter = new flac.FileEncoder({
             samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'),
             compressionLevel: settings.get('compressionLevel'),
-            file: path.join(filePath, getDateStr(), '_recording.flac')
+            file: path.join(filePath, getDateStr() + '_recording.flac')
         });
         this.arecord.pipe(this.fileWriter);
         recording = true;
