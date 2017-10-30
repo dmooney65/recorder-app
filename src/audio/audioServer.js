@@ -1,4 +1,4 @@
-const os = require('os');
+const ip = require('ip');
 const http = require('http');
 
 module.exports.Server = (port, writer, sampleRate) => {
@@ -48,7 +48,7 @@ module.exports.Server = (port, writer, sampleRate) => {
             createServer();
         }
         server.timeout = 0;
-        server.listen(port, os.hostname, 32);        
+        server.listen(port, ip.address(), 32);        
     };
 
     let stop = () => {

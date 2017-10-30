@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 const os = require('os');
-app.locals.hostname = os.hostname();
+//app.locals.hostname = os.hostname();
 //Serving the files on the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/bootstrap')));

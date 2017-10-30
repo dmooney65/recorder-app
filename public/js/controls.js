@@ -36,6 +36,10 @@ let setServing = (serving) => {
     }
 };
 
+let setPath = (recordingsPath) => {
+    $('#path').text(recordingsPath);
+};
+
 let initControls = (function () {
 
     setupNav(0);
@@ -74,6 +78,7 @@ let initControls = (function () {
         setPlaying(status['playing']);
         setRecording(status['recording']);
         setServing(status['serving']);
+        setPath(status['recordingsPath']);
     };
 
     playPauseBtn.click(function () {

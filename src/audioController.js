@@ -4,28 +4,38 @@ const execStream = require('exec-stream');
 const devnull = require('dev-null')();
 const audioServer = require('./audio/audioServer.js');
 var settings = require('./settingsController.js')();
-var os = require('os');
+var mp = require('./usbUtils.js');
+
+
+
+
+const formatField = (val) => {
+    return (0 + val.toString()).slice(-2);
+};
+
+const getDateStr = () => {
+    var date = new Date();
+    var y = date.getFullYear().toString();
+    var m = formatField(date.getMonth() + 1);
+    var d = formatField(date.getDate());
+    var hh = formatField(date.getHours());
+    var mm = formatField(date.getMinutes());
+    var ss = formatField(date.getSeconds());
+    return y + m + d + hh + mm + ss;
+};
+
 
 module.exports.Player = () => {
 
     var recording = false;
     var serving = false;
     var playing = false;
+    var filePath = mp.getRecordingPath();
 
-    const formatField = (val) => {
-        return (0 + val.toString()).slice(-2);
-    };
-
-    const getDateStr = () => {
-        var date = new Date();
-        var y = date.getFullYear().toString();
-        var m = formatField(date.getMonth() + 1);
-        var d = formatField(date.getDate());
-        var hh = formatField(date.getHours());
-        var mm = formatField(date.getMinutes());
-        var ss = formatField(date.getSeconds());
-        return y + m + d + hh + mm + ss;
-    };
+    /*setInterval(function () {
+        filePath = mp.getRecordingPath();
+        console.log(filePath);
+    }, 5000);*/
 
     let play = () => {
         //if (!this.arecord) {
@@ -64,12 +74,13 @@ module.exports.Player = () => {
         this.fileWriter = new flac.FileEncoder({
             samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'),
             compressionLevel: settings.get('compressionLevel'),
-            file: path.join(os.homedir(), '/Music/' + getDateStr() + '_recording.flac')
+            file: path.join(filePath, getDateStr(), '_recording.flac')
         });
         this.arecord.pipe(this.fileWriter);
         recording = true;
         return getStatus();
     };
+
 
     let stopRecord = () => {
         //console.log('stopping recording');
@@ -101,7 +112,7 @@ module.exports.Player = () => {
     };
 
     let getStatus = () => {
-        return ({ 'playing': playing, 'recording': recording, 'serving': serving });
+        return ({ 'playing': playing, 'recording': recording, 'serving': serving , 'recordingsPath': mp.getRecordingPath()});
     };
 
     return {
@@ -111,7 +122,7 @@ module.exports.Player = () => {
         stopRecord: stopRecord,
         startServer: startServer,
         stopServer: stopServer,
-        getStatus: getStatus
+        getStatus: getStatus,
     };
 };
 

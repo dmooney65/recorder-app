@@ -4,6 +4,7 @@ BindsTo=dev-%i.device
 After=dev-%i.device
 
 [Service]
+User=pi
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/local/bin/cpmount /dev/%I
