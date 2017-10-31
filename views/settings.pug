@@ -8,18 +8,18 @@ block content
     div.container
         div.page-header Manage Settings
 
-        form.form-horizontal
-            fieldset
-                div.form-group
-                    label.col-lg-2.control-label(for="sampleRate") Sampling
-                    div.col-lg-10
+        div.col-xs-8.col-sm-6
+            form.form-horizontal
+                fieldset
+                    div.form-group
+                        label.control-label(for="sampleRate") Sampling
                         select.form-control(id="sampleRate")
                             option(value="16/44100") 16/44.1                                
                             option(value="24/48000") 24/48
                             option(value="24/96000") 24/96
-                            option(value="24/192000") 24/192                            
-                div.form-group
-                    div.col-lg-10.col-lg-offset-2
+                            option(value="24/192000") 24/192
+                fieldset                        
+                    div.form-group
                         button.btn.btn-primary(type="submit" id="save") Save
 
-        include logger.pug
+            ul.list-group(id ="log")

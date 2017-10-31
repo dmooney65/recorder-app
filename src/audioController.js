@@ -4,7 +4,7 @@ const execStream = require('exec-stream');
 const devnull = require('dev-null')();
 const audioServer = require('./audio/audioServer.js');
 var settings = require('./settingsController.js')();
-var mp = require('./usbUtils.js');
+var mp = require('./usbController.js');
 
 
 
@@ -41,9 +41,9 @@ module.exports.Player = () => {
         //if (!this.arecord) {
         this.arecord = execStream(
             'arecord', ['-f', 'S' + settings.get('bitDepth') + '_LE', '-c', 2,
-                '-r', settings.get('sampleRate'), '-Dplug:default']
+                '-r', settings.get('sampleRate'), '-D', 'plug:default']
         );
-        this.aplay = execStream('aplay', ['-Dplug:default']);
+        this.aplay = execStream('aplay', ['-D', 'plug:default']);
         //} else {
         //    this.arecord.unpipe(devnull);
         //}
@@ -74,7 +74,7 @@ module.exports.Player = () => {
         this.fileWriter = new flac.FileEncoder({
             samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'),
             compressionLevel: settings.get('compressionLevel'),
-            file: path.join(mp.getRecordingPath(), getDateStr() + '_recording.flac')
+            file: path.join(mp.getRecordingPath(), getDateStr() + '_rec.flac')
         });
         this.arecord.pipe(this.fileWriter);
         recording = true;

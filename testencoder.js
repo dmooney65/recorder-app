@@ -19,7 +19,7 @@ var wavWriter = new wav.Writer({
 });
 
 var outputFileStream = fs.WriteStream(path.join(__dirname, '/output.wav'));
-var flacFileStream = new flac.FileEncoder({ samplerate: 48000, inputAs32: true, bitsPerSample: 24, file: path.join(__dirname, '/out.flac') });
+var flacFileStream = new flac.FileEncoder({ samplerate: 48000, bitsPerSample: 24, file: path.join(__dirname, '/out.flac') });
 
 micInputStream.pipe(wavWriter).pipe(outputFileStream);
 micInputStream.pipe(flacFileStream);

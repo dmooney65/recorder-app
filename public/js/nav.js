@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-let initNav = (function () {
+let initNav = () => {
 
     $(navs[0]).click(function () {
         if (window.location.pathname != '/') {
@@ -27,7 +27,7 @@ let initNav = (function () {
     });
 
 
-});
+};
 
 let setupNav = (index) => {
     $(navs).removeClass('active');

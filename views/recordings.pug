@@ -5,6 +5,29 @@ block content
 
     append head
         script(src='/js/recordings.js')
+        - var values = [];
         
     div.container
         div.page-header Manage Recordings
+            
+    div.container        
+        div.row
+            div.col-xs-auto.col-sm-8
+                table.table.table-condensed.table-responsive.table-striped.table-hover(id="intlist") Internal storage
+                    thead
+                        tr
+                            th(scope="row") Actions
+                            th(scope="row") Filename
+                            th(scope="row") Time
+                            th(scope="row") Size
+                            th(scope="row") BitRate
+                    tbody
+                table.table.table-condensed.table-responsive.table-striped.table-hover(id="usblist") USB storage
+                    thead
+                        tr
+                            th(scope="row") Actions
+                            th(scope="row") Filename
+                            th(scope="row") Time
+                            th(scope="row") Size
+                            th(scope="row") BitRate
+                    tbody
