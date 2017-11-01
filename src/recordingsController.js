@@ -1,6 +1,6 @@
 const fs = require('fs');
 var mi = require('mediainfo-wrapper');
-const execStream = require('exec-stream');
+const { spawn } = require('child_process');
 const settings = require('./settingsController.js')();
 
 module.exports.readFiles = (dir) => {
@@ -42,10 +42,18 @@ module.exports.deleteFile = (file) => {
     fs.unlinkSync(file);
 };
 
+
 module.exports.encodeFile = (file) => {
-    this.transcode = execStream(
+    var transcode = spawn(
         'ffmpeg', ['-i', file, '-codec:a', 'libmp3lame',
-            '-qscale:a', settings.get('mp3Rate'), file.replace('.flac', '.mp3')]
+            '-qscale:a', settings.get('mp3Rate'), file.replace('.flac', '.mp3')],
+        {
+            stdio: 'ignore'
+        }
     );
-    //fs.unlinkSync(file);
+
+    transcode.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+    });
+
 };
