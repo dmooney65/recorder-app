@@ -51,8 +51,8 @@ let initControls = (function () {
     var context;
     var meter = null;
     var canvasContext = null;
-    var WIDTH=300;
-    var HEIGHT=50;
+    var WIDTH = 300;
+    var HEIGHT = 50;
     var rafID = null;
 
     var doPost = (function (action) {
@@ -85,11 +85,11 @@ let initControls = (function () {
         if (!$(this).find('span').hasClass('glyphicon-stop')) {
             doPost('play');
             setPlaying(true);
-            disableSecondary(true);                    
+            disableSecondary(true);
         } else {
             doPost('stop');
             setPlaying(false);
-            disableSecondary(false);                    
+            disableSecondary(false);
         }
     });
 
@@ -113,7 +113,18 @@ let initControls = (function () {
                 setupAudioContext();
             }
             audio.src = 'http://' + hostname + ':3080';
-            audio.play();
+            var playPromise = audio.play();
+
+            // In browsers that don’t yet support this functionality,
+            // playPromise won’t be defined.
+            if (playPromise !== undefined) {
+                playPromise.then(function () {
+                    // Automatic playback started!
+                }).catch(function (error) {
+                    console.error(error);
+                    audio.play();
+                });
+            }
         } else {
             doPost('stopServer');
             //audio.pause();
@@ -127,10 +138,10 @@ let initControls = (function () {
         context = new (window.AudioContext || window.webkitAudioContext)();
         var source = context.createMediaElementSource(audio);
         var analyser = context.createAnalyser();
-        meter = createAudioMeter(context,0.99,0.05,500);
+        meter = createAudioMeter(context, 0.99, 0.05, 500);
         source.connect(meter);
-        drawLoop();        
-        
+        drawLoop();
+
         //var filter = context.createBiquadFilter();
         //filter.type = 'highpass';
         //filter.frequency.value = 500;
@@ -140,21 +151,21 @@ let initControls = (function () {
         analyser.connect(context.destination);
     }
 
-    function drawLoop( time ) {
+    function drawLoop(time) {
         // clear the background
-        canvasContext.clearRect(0,0,WIDTH,HEIGHT);
-    
+        canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
+
         // check if we're currently clipping
         if (meter.checkClipping())
             canvasContext.fillStyle = 'red';
         else
             canvasContext.fillStyle = 'green';
-    
+
         // draw a bar based on the current volume
-        canvasContext.fillRect(0, 0, meter.volume*WIDTH*1.4, HEIGHT);
-    
+        canvasContext.fillRect(0, 0, meter.volume * WIDTH * 1.4, HEIGHT);
+
         // set up the next visual callback
-        rafID = window.requestAnimationFrame( drawLoop );
+        rafID = window.requestAnimationFrame(drawLoop);
     }
 
 });

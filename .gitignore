@@ -35,3 +35,4 @@ dist
 # Debug log from npm
 npm-debug.log
 
+settings.json
