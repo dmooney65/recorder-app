@@ -1,6 +1,7 @@
 const fs = require('fs');
 var mi = require('mediainfo-wrapper');
 const execStream = require('exec-stream');
+const settings = require('./settingsController.js')();
 
 module.exports.readFiles = (dir) => {
 
@@ -44,7 +45,7 @@ module.exports.deleteFile = (file) => {
 module.exports.encodeFile = (file) => {
     this.transcode = execStream(
         'ffmpeg', ['-i', file, '-codec:a', 'libmp3lame',
-            '-qscale:a', '0', file.replace('.flac', '.mp3')]
+            '-qscale:a', settings.get('mp3Rate'), file.replace('.flac', '.mp3')]
     );
     //fs.unlinkSync(file);
 };
