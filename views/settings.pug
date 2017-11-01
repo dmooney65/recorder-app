@@ -12,14 +12,21 @@ block content
             form.form-horizontal
                 fieldset
                     div.form-group
-                        label.control-label(for="sampleRate") Sampling
+                        label.control-label(for="sampleRate") FLAC Bitdepth/Sample Rate
                         select.form-control(id="sampleRate")
-                            option(value="16/44100") 16/44.1                                
-                            option(value="24/48000") 24/48
-                            option(value="24/96000") 24/96
-                            option(value="24/192000") 24/192
+                            option(value="16/44100") 16bit 44.1 Khz                               
+                            option(value="24/48000") 24bit 48 Khz
+                            option(value="24/96000") 24bit 96 Khz
+                            option(value="24/192000") 24bit 192 Khz
+                    div.form-group
+                        label.control-label(for="mp3Rate") MP3 VBR Bitrate
+                        select.form-control(id="mp3Rate")
+                            option(value="0") ~245 kbps                                
+                            option(value="1") ~225 kbps
+                            option(value="2") ~190 kbps
+                            option(value="3") ~175 kbps
                 fieldset                        
                     div.form-group
-                        button.btn.btn-primary(type="submit" id="save") Save
+                        button.btn.btn-primary(type="button" id="save") Save
 
             ul.list-group(id ="log")

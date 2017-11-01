@@ -1,7 +1,6 @@
 const path = require('path');
 const flac = require('flac-bindings');
 const execStream = require('exec-stream');
-const devnull = require('dev-null')();
 const audioServer = require('./audio/audioServer.js');
 var settings = require('./settingsController.js')();
 var mp = require('./usbController.js');
@@ -39,8 +38,9 @@ module.exports.Player = () => {
 
     let play = () => {
         //if (!this.arecord) {
+        console.log(settings.getAll());
         this.arecord = execStream(
-            'arecord', ['-f', 'S' + settings.get('bitDepth') + '_LE', '-c', 2,
+            'arecord', ['-f', settings.get('bitFormat'), '-c', 2,
                 '-r', settings.get('sampleRate'), '-D', 'plug:default']
         );
         this.aplay = execStream('aplay', ['-D', 'plug:default']);
@@ -72,7 +72,7 @@ module.exports.Player = () => {
 
     let startRecord = () => {
         this.fileWriter = new flac.FileEncoder({
-            samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'),
+            samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'), inputAs32: false,
             compressionLevel: settings.get('compressionLevel'),
             file: path.join(mp.getRecordingPath(), getDateStr() + '_rec.flac')
         });
@@ -92,7 +92,7 @@ module.exports.Player = () => {
 
     let startServer = () => {
         this.streamWriter = new flac.StreamEncoder({
-            samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'),
+            samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'), inputAs32: false,
             compressionLevel: settings.get('compressionLevel')
         });
         this.server = audioServer.Server(3080, this.streamWriter, settings.get('sampleRate'));

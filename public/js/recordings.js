@@ -40,10 +40,10 @@ let renderList = (list, data) => {
             var encodedPath = encodeURIComponent(element.path + element.file);
             list.append('<tr><td><a href=/recordings/download?file='
                 + encodedPath
-                + '>  <span class="glyphicon glyphicon-download-alt"></span></a>'
+                + '>  <span class="glyphicon glyphicon-download-alt" ></span></a>'
                 + '<a href=/recordings/delete?file='
                 + encodedPath
-                + '>  <span class="glyphicon glyphicon-remove"></span></a>'
+                + ' onclick="return confirm(\'Are you sure you want to delete this item?\');">  <span class="glyphicon glyphicon-remove"></span></a>'
                 + '<a href=/recordings/encode?file='
                 + encodedPath
                 + '>  <span class="glyphicon glyphicon-export"></span></a>'

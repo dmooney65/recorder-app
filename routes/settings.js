@@ -13,6 +13,7 @@ router.post('/', function (req, res) {
         settings.set('bitDepth', req.body.bitDepth);
         settings.set('sampleRate', req.body.sampleRate);
         settings.set('compressionLevel', req.body.compressionLevel);
+        settings.set('mp3Rate', req.body.mp3Rate);
         res.send(settings.save());
     } else {
         res.send(settings.getAll());

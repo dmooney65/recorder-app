@@ -1,8 +1,10 @@
 let sampleRate;
+let mp3Rate;
 
 document.addEventListener('DOMContentLoaded', function () {
 
     sampleRate = $('#sampleRate');
+    mp3Rate = $('#mp3Rate');
     initSettings();
 
 });
@@ -19,8 +21,9 @@ let initSettings = (function () {
             data: action,
             url: '/settings',
             success: function (data) {
-                //console.log(data);
-                sampleRate.val(data.bitDepth+'/'+data.sampleRate);
+                console.log(data);
+                sampleRate.val(data.bitDepth + '/' + data.sampleRate);
+                mp3Rate.val(data.mp3Rate);
                 //return data;
             },
             error: function (err) {
@@ -30,15 +33,16 @@ let initSettings = (function () {
     });
 
     doPost({ 'command': 'get' });
-    //
 
     $('#save').click(function (e) {
         e.preventDefault();
         var sampling = sampleRate.val().split('/');
-        var action = { 'command': 'set', 'bitDepth': sampling[0], 'sampleRate': sampling[1], 'compressionLevel': 5 };
+        var action = {
+            'command': 'set', 'bitDepth': sampling[0], 'sampleRate': sampling[1],
+            'compressionLevel': 5, 'mp3Rate': mp3Rate.val()
+        };
         doPost(action);
         createMessage('Settings Saved');
     });
-    //var settings = fs.createReadStream()
 
 });
