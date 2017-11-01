@@ -34,7 +34,7 @@ module.exports.readFiles = (dir) => {
 
         }
         return (ret);
-    }).catch(function (e) { return e; });
+    }).catch(function (e) { console.log(e); });
 };
 
 

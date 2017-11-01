@@ -38,7 +38,6 @@ module.exports.Player = () => {
 
     let play = () => {
         //if (!this.arecord) {
-        console.log(settings.getAll());
         this.arecord = execStream(
             'arecord', ['-f', settings.get('bitFormat'), '-c', 2,
                 '-r', settings.get('sampleRate'), '-D', 'plug:default']

@@ -15,7 +15,7 @@
     "flac-bindings": "melchor629/node-flac-bindings",
     "ip": "^1.1.5",
     "jquery": "^3.2.1",
-    "mediainfo-wrapper": "^1.2.0",
+    "mediainfo-wrapper": "dmooney65/mediainfo-wrapper",
     "morgan": "~1.9.0",
     "node-usb-detection": "^1.0.2",
     "pug": "^2.0.0-rc.4",

@@ -21,10 +21,8 @@ let initSettings = (function () {
             data: action,
             url: '/settings',
             success: function (data) {
-                console.log(data);
                 sampleRate.val(data.bitDepth + '/' + data.sampleRate);
                 mp3Rate.val(data.mp3Rate);
-                //return data;
             },
             error: function (err) {
                 throw err;
