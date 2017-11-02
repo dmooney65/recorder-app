@@ -23,52 +23,6 @@ audio {
 .meter {
     height:50px;
 }
-.container-fixed {
-    margin-right: auto;
-    margin-left: auto;
-    padding-left: 15px;
-    padding-right: 15px;
-    width: 510px;
-}
-
-.container-freq {
-    margin-right: auto;
-    margin-left: auto;
-    padding-left: 5px;
-    padding-right: 5px;
-    width: 480px;
-}
-
-.scrollable-menu {
-    height: auto;
-    max-height: 140px;
-    overflow-x: hidden;    
-}
-
-.scrollable-menu::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 4px;        
-}    
-.scrollable-menu::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    background-color: lightgray;
-}/*
-    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.75);     
-    --box-shadow: 0 0 1px rgba(255,255,255,.75);        
-}*/
-
-.frequencyInput {
-    padding-left: 15px;
-    left: 5px;
-    max-width: 300px;
-    font-size: 52px;
-    text-align: right;
-    top: 4px;
-    background: transparent;
-    border: none;
-    font-family: sans-serif;
-    color: rgb(182, 189, 172);
-  }
 
 .footer {
     position: absolute;

@@ -10,8 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-
-
 let initSettings = (function () {
     setupNav(1);
 

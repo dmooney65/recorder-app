@@ -29,6 +29,7 @@ module.exports.Player = () => {
     var recording = false;
     var serving = false;
     var playing = false;
+    var server;
     //var filePath = mp.getRecordingPath();
 
     /*setInterval(function () {
@@ -94,24 +95,33 @@ module.exports.Player = () => {
             samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'), inputAs32: false,
             compressionLevel: 9
         });
-        this.server = audioServer.Server(3080, this.streamWriter, settings.get('sampleRate'));
-        this.server.start();
+        server = audioServer.Server(3080, this.streamWriter, settings.get('sampleRate'));
+        server.start();
         //this.arecord.unpipe(this.aplay);
         this.arecord.pipe(this.streamWriter);
-        serving = true;
+        serving = server.listening();
         return getStatus();
     };
 
     let stopServer = () => {
         this.arecord.unpipe(this.streamWriter);
         //this.arecord.pipe(this.aplay);
-        this.server.stop();
+        server.stop();
         serving = false;
         return getStatus();
     };
 
+    let getServing = () => {
+        if (server) {
+            serving = server.listening();
+            return serving;
+        } else {
+            return false;
+        }
+    };
+
     let getStatus = () => {
-        return ({ 'playing': playing, 'recording': recording, 'serving': serving , 'recordingsPath': mp.getRecordingPath()});
+        return ({ 'playing': playing, 'recording': recording, 'serving': getServing(), 'recordingsPath': mp.getRecordingPath() });
     };
 
     return {

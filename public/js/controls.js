@@ -85,11 +85,11 @@ let initControls = (function () {
         if (!$(this).find('span').hasClass('glyphicon-stop')) {
             doPost('play');
             setPlaying(true);
-            disableSecondary(true);
+            //disableSecondary(true);
         } else {
             doPost('stop');
             setPlaying(false);
-            disableSecondary(false);
+            //disableSecondary(false);
         }
     });
 
@@ -108,7 +108,7 @@ let initControls = (function () {
         var span = $(this).find('span');
         if (!span.hasClass('text-success')) {
             doPost('startServer');
-            setServing(true);
+            doPost('getStatus');
             if (!context) {
                 setupAudioContext();
             }
@@ -122,13 +122,15 @@ let initControls = (function () {
                     // Automatic playback started!
                 }).catch(function (error) {
                     console.error(error);
-                    audio.play();
+                    //audio.play();
                 });
             }
+            disableSecondary(true);
         } else {
             doPost('stopServer');
             //audio.pause();
             setServing(false);
+            disableSecondary(false);
         }
     });
 
@@ -138,7 +140,7 @@ let initControls = (function () {
         context = new (window.AudioContext || window.webkitAudioContext)();
         var source = context.createMediaElementSource(audio);
         var analyser = context.createAnalyser();
-        meter = createAudioMeter(context, 0.99, 0.05, 500);
+        meter = createAudioMeter(context, 0.98, 0.05, 500);
         source.connect(meter);
         drawLoop();
 
