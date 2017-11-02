@@ -28,11 +28,26 @@ let setRecording = (recording) => {
     }
 };
 
-let setServing = (serving) => {
+let setServing = (serving, audio) => {
     if (!serving) {
         localAudioBtn.find('span').removeClass('text-success');
+        audio.pause();        
     } else {
         localAudioBtn.find('span').addClass('text-success');
+        if (audio.paused) {
+            var playPromise = audio.play();
+
+            // In browsers that don’t yet support this functionality,
+            // playPromise won’t be defined.
+            if (playPromise !== undefined) {
+                playPromise.then(function () {
+                    // Automatic playback started!
+                }).catch(function (error) {
+                    console.error(error);
+                    //audio.play();
+                });
+            }
+        }
     }
 };
 
@@ -77,7 +92,7 @@ let initControls = (function () {
     let setStatus = (status) => {
         setPlaying(status['playing']);
         setRecording(status['recording']);
-        setServing(status['serving']);
+        setServing(status['serving'], audio);
         setPath(status['recordingsPath']);
     };
 
@@ -113,24 +128,12 @@ let initControls = (function () {
                 setupAudioContext();
             }
             audio.src = 'http://' + hostname + ':3080';
-            var playPromise = audio.play();
 
-            // In browsers that don’t yet support this functionality,
-            // playPromise won’t be defined.
-            if (playPromise !== undefined) {
-                playPromise.then(function () {
-                    // Automatic playback started!
-                }).catch(function (error) {
-                    console.error(error);
-                    //audio.play();
-                });
-            }
-            disableSecondary(true);
+            //disableSecondary(true);
         } else {
             doPost('stopServer');
-            //audio.pause();
-            setServing(false);
-            disableSecondary(false);
+            doPost('getStatus');
+            //disableSecondary(false);
         }
     });
 
