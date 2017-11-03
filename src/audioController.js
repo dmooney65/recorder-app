@@ -41,7 +41,7 @@ module.exports.Player = () => {
         //if (!this.arecord) {
         this.arecord = execStream(
             'arecord', ['-f', settings.get('bitFormat'), '-c', 2,
-                '-r', settings.get('sampleRate'), '-D', 'plug:dsnoop']
+                '-r', settings.get('sampleRate'), '-D', 'plug:default']
         );
         this.aplay = execStream('aplay', ['-D', 'plug:default']);
         //} else {
