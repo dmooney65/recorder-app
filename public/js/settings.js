@@ -1,10 +1,12 @@
 let sampleRate;
 let mp3Rate;
+let defaultCard;
 
 document.addEventListener('DOMContentLoaded', function () {
 
     sampleRate = $('#sampleRate');
     mp3Rate = $('#mp3Rate');
+    defaultCard = $('#defaultCard');
     initSettings();
 
 });
@@ -21,6 +23,7 @@ let initSettings = (function () {
             success: function (data) {
                 sampleRate.val(data.bitDepth + '/' + data.sampleRate);
                 mp3Rate.val(data.mp3Rate);
+                defaultCard.val(data.defaultCard);
             },
             error: function (err) {
                 throw err;
@@ -35,7 +38,7 @@ let initSettings = (function () {
         var sampling = sampleRate.val().split('/');
         var action = {
             'command': 'set', 'bitDepth': sampling[0], 'sampleRate': sampling[1],
-            'compressionLevel': 5, 'mp3Rate': mp3Rate.val()
+            'compressionLevel': 5, 'mp3Rate': mp3Rate.val(), 'defaultCard': defaultCard.val()
         };
         doPost(action);
         createMessage('Settings Saved');

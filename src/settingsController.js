@@ -55,10 +55,11 @@ module.exports = () => {
 
     let save = () => {
         if(settings.bitDepth == '24'){
-            settings.bitFormat = 'S24_3LE';
-            settings.inputAs32 = false;
+            settings.bitFormat = 'S24_LE';
+            settings.inputAs32 = true;
         } else {
-            settings.bitFormat = 'S16_LE';            
+            settings.bitFormat = 'S16_LE';
+            settings.inputAs32 = false;            
         }
         fs.writeFileAsync(filePath, JSON.stringify(settings)).then(
             function () {
