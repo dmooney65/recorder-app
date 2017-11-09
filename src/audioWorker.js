@@ -31,7 +31,7 @@ if (settings.highResFormat == 'wav') {
     //console.log('recording wav');
     fileWriter = fs.createWriteStream(path.join(recordingsPath, getDateStr() + '_rec.wav'));
     fileWriter.on('finish', function() {
-        console.log('file written');
+        //console.log('file written');
     });
     fileWriter.write(header(0, {
         bitDepth: settings.bitFormat.replace(/\D/g, ''),
@@ -47,6 +47,10 @@ if (settings.highResFormat == 'wav') {
     });
 }
 
+process.on('message', (msg) =>{
+    console.log(msg);
+    fileWriter.end();
+});
 
 //var out = fs.createWriteStream(path.join(recordingsPath, getDateStr() + '_rec.wav'));
 //console.log(fileWriter);

@@ -110,6 +110,7 @@ module.exports.Player = () => {
         //console.log('stopping recording');
         //this.arecord.stdout.unpipe(this.fileWriter);
         //this.fileWriter.end();
+        this.child.send('end writes');
         this.arecord.stdout.unpipe(this.child.stdin);
         //this.child.detach
         recording = false;
