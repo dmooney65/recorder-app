@@ -5,7 +5,7 @@ const settings = require('./settingsController.js')();
 
 module.exports.readFiles = (dir) => {
 
-    return mi({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.mp3').then(function (data) {
+    return mi({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.wav', '**/*.mp3').then(function (data) {
         var ret = [];
         for (var i in data) {
             var fullPath = dir + data[i].file;

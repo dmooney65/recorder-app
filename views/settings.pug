@@ -30,6 +30,11 @@ block content
                         select.form-control(id="defaultCard")
                             option(value="plug:default") Plug device
                             option(value="hw:0,0") Hardware device
+                    div.form-group
+                        label.control-label(for="highResFormat") Format for recordings
+                        select.form-control(id="highResFormat")
+                            option(value="flac") 16/24bit FLAC
+                            option(value="wav") 16/32bit WAV
                 fieldset
                     div.form-group
                         button.btn.btn-primary(type="button" id="save") Save

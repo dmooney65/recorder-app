@@ -50,7 +50,7 @@ module.exports.Player = () => {
             '-r', settings.get('sampleRate'), '-D', settings.get('defaultCard'));
         this.arecord = spawn(
             'arecord', ['-f', settings.get('bitFormat'), '-c', 2,
-                '-r', settings.get('sampleRate'), '-D', settings.get('defaultCard')]
+                '-r', settings.get('sampleRate'), '-t', 'wav', '-D', settings.get('defaultCard')]
         );
 
         /*this.arecord.stdout.on('data', (data) =>{
@@ -66,9 +66,7 @@ module.exports.Player = () => {
         });
 
         this.aplay = spawn('aplay', ['-D', 'plug:default']);
-        //} else {
-        //    this.arecord.unpipe(devnull);
-        //}
+        
         this.arecord.stdout.pipe(this.aplay.stdin);
         playing = true;
         return getStatus();

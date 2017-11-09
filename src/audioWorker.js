@@ -1,18 +1,14 @@
 const path = require('path');
-
 const flac = require('flac-bindings');
+const fs = require('fs');
 
-//var fs = require('fs');
-
-//process.argv.forEach((val, index) => {
-//    console.log(`${index}: ${val}`);
-//});
+var header = require('waveheader');
 
 var recordingsPath = process.argv[2];
 
 var settings = JSON.parse(process.argv[3]);
+//console.log(settings);
 
-//var out = fs.createWriteStream('./out.wav');
 const formatField = (val) => {
     return (0 + val.toString()).slice(-2);
 };
@@ -28,15 +24,31 @@ const getDateStr = () => {
     return y + m + d + hh + mm + ss;
 };
 
-var fileWriter = new flac.FileEncoder({
-    samplerate: settings.sampleRate, bitsPerSample: settings.bitDepth, inputAs32: settings.inputAs32,
-    compressionLevel: settings.compressionLevel,
-    file: path.join(recordingsPath, getDateStr() + '_rec.flac')
-});
+let fileWriter;
 
-//var fs = require('fs');
 
-//var out = fs.createWriteStream('./out.wav');
+if (settings.highResFormat == 'wav') {
+    //console.log('recording wav');
+    fileWriter = fs.createWriteStream(path.join(recordingsPath, getDateStr() + '_rec.wav'));
+    fileWriter.on('finish', function() {
+        console.log('file written');
+    });
+    fileWriter.write(header(0, {
+        bitDepth: settings.bitFormat.replace(/\D/g, ''),
+        sampleRate: settings.sampleRate,
+        channels: 2
+    }));
+    
+} else {
+    fileWriter = new flac.FileEncoder({
+        samplerate: settings.sampleRate, bitsPerSample: settings.bitDepth, inputAs32: settings.inputAs32,
+        compressionLevel: settings.compressionLevel,
+        file: path.join(recordingsPath, getDateStr() + '_rec.flac')
+    });
+}
+
+
+//var out = fs.createWriteStream(path.join(recordingsPath, getDateStr() + '_rec.wav'));
 //console.log(fileWriter);
 process.stdin.pipe(fileWriter);
 

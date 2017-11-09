@@ -20,8 +20,10 @@
     "morgan": "~1.9.0",
     "node-bitarray": "^0.1.0",
     "node-usb-detection": "^1.0.2",
+    "node-wav": "0.0.2",
     "pug": "^2.0.0-rc.4",
     "serve-favicon": "~2.4.5",
-    "sox-stream": "^2.0.1"
+    "sox-stream": "^2.0.1",
+    "waveheader": "0.0.2"
   }
 }

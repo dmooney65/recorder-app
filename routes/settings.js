@@ -15,6 +15,7 @@ router.post('/', function (req, res) {
         settings.set('compressionLevel', req.body.compressionLevel);
         settings.set('mp3Rate', req.body.mp3Rate);
         settings.set('defaultCard', req.body.defaultCard);
+        settings.set('highResFormat', req.body.highResFormat);
         res.send(settings.save());
     } else {
         res.send(settings.getAll());
