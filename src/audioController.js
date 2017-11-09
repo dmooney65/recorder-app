@@ -1,13 +1,10 @@
 const path = require('path');
 const flac = require('flac-bindings');
-const execStream = require('exec-stream');
+//const execStream = require('exec-stream');
 const { spawn } = require('child_process');
 const audioServer = require('./audio/audioServer.js');
-var settings = require('./settingsController.js')();
-var mp = require('./usbController.js');
-
-
-
+const settings = require('./settingsController.js')();
+const mp = require('./usbController.js');
 
 const formatField = (val) => {
     return (0 + val.toString()).slice(-2);
@@ -96,12 +93,16 @@ module.exports.Player = () => {
     };
 
     let startRecord = () => {
-        this.fileWriter = new flac.FileEncoder({
+        var recPath = mp.getRecordingPath();
+        var args = [ './src/audioWorker.js', recPath, JSON.stringify(settings.getAll()) ];
+        this.child = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
+        /*this.fileWriter = new flac.FileEncoder({
             samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'), inputAs32: settings.get('inputAs32'),
             compressionLevel: settings.get('compressionLevel'),
             file: path.join(mp.getRecordingPath(), getDateStr() + '_rec.flac')
         });
-        this.arecord.stdout.pipe(this.fileWriter);
+        this.arecord.stdout.pipe(this.fileWriter);*/
+        this.arecord.stdout.pipe(this.child.stdin);
         recording = true;
         return getStatus();
     };
@@ -109,8 +110,10 @@ module.exports.Player = () => {
 
     let stopRecord = () => {
         //console.log('stopping recording');
-        this.arecord.stdout.unpipe(this.fileWriter);
-        this.fileWriter.end();
+        //this.arecord.stdout.unpipe(this.fileWriter);
+        //this.fileWriter.end();
+        this.arecord.stdout.unpipe(this.child.stdin);
+        //this.child.detach
         recording = false;
         return getStatus();
     };
