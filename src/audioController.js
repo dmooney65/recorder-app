@@ -46,8 +46,8 @@ module.exports.Player = () => {
 
     let play = () => {
         //if (!this.arecord) {
-        console.log('arecord opts', '-f', settings.get('bitFormat'), '-c', 2,
-            '-r', settings.get('sampleRate'), '-D', settings.get('defaultCard'));
+        console.log('arecord ', '-f', settings.get('bitFormat'), '-c', 2,
+            '-r', settings.get('sampleRate'), '-t', 'wav','-D', settings.get('defaultCard'));
         this.arecord = spawn(
             'arecord', ['-f', settings.get('bitFormat'), '-c', 2,
                 '-r', settings.get('sampleRate'), '-t', 'wav', '-D', settings.get('defaultCard')]
@@ -92,7 +92,7 @@ module.exports.Player = () => {
 
     let startRecord = () => {
         var recPath = mp.getRecordingPath();
-        var args = [ './src/audioWorker.js', recPath, JSON.stringify(settings.getAll()) ];
+        var args = [ path.join(__dirname,'/audioWorker.js'), recPath, JSON.stringify(settings.getAll()) ];
         this.child = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
         /*this.fileWriter = new flac.FileEncoder({
             samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'), inputAs32: settings.get('inputAs32'),
