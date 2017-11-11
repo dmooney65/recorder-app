@@ -10,20 +10,15 @@
     "bootstrap": "^3.3.7",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
-    "dev-null": "^0.1.1",
-    "exec-stream": "^0.1.0",
     "express": "~4.15.5",
-    "flac-bindings": "melchor629/node-flac-bindings",
+    "flac-bindings": "dmooney65/node-flac-bindings",
     "ip": "^1.1.5",
     "jquery": "^3.2.1",
     "mediainfo-wrapper": "dmooney65/mediainfo-wrapper",
     "morgan": "~1.9.0",
-    "node-bitarray": "^0.1.0",
     "node-usb-detection": "^1.0.2",
-    "node-wav": "0.0.2",
     "pug": "^2.0.0-rc.4",
     "serve-favicon": "~2.4.5",
-    "sox-stream": "^2.0.1",
     "waveheader": "0.0.2"
   }
 }
