@@ -41,7 +41,7 @@ if (settings.highResFormat == 'wav') {
     
 } else {
     fileWriter = new flac.FileEncoder({
-        samplerate: settings.sampleRate, bitsPerSample: settings.bitDepth, inputAs32: settings.inputAs32,
+        samplerate: settings.sampleRate, bitsPerSample: settings.bitFormat.replace(/\D/g, ''),
         compressionLevel: settings.compressionLevel,
         file: path.join(recordingsPath, getDateStr() + '_rec.flac')
     });
@@ -52,13 +52,5 @@ process.on('message', (msg) =>{
     fileWriter.end();
 });
 
-//var out = fs.createWriteStream(path.join(recordingsPath, getDateStr() + '_rec.wav'));
-//console.log(fileWriter);
 process.stdin.pipe(fileWriter);
 
-/*let startRecord = () => {
-    this.
-    this.arecord.stdout.pipe(this.fileWriter);
-    recording = true;
-    return getStatus();
-};*/

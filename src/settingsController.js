@@ -55,7 +55,7 @@ module.exports = () => {
 
     let save = () => {
         if (settings.bitDepth == '24') {
-            if (settings.highResFormat == 'wav') {
+            if (settings.highResFormat == 'wav' || settings.native24Bit == 'false') {
                 settings.bitFormat = 'S32_LE';
             } else {
                 settings.bitFormat = 'S24_LE';

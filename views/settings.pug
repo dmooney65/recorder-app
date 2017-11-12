@@ -35,6 +35,11 @@ block content
                         select.form-control(id="highResFormat")
                             option(value="flac") 16/24bit FLAC
                             option(value="wav") 16/32bit WAV
+                        div.checkbox
+                            label
+                                input(type="checkbox" id="native24Bit") 
+                                span Hardware 24bit Support?
+                    
                 fieldset
                     div.form-group
                         button.btn.btn-primary(type="button" id="save") Save
