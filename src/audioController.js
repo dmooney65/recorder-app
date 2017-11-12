@@ -104,7 +104,7 @@ module.exports.Player = () => {
 
     let startServer = () => {
         this.streamWriter = new flac.StreamEncoder({
-            samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'), inputAs32: settings.get('inputAs32'),
+            samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitFormat').replace(/\D/g, ''), inputAs32: settings.get('inputAs32'),
             compressionLevel: 0
         });
         server = audioServer.Server(3080, this.streamWriter, settings.get('sampleRate'));
