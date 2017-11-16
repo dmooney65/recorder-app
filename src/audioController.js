@@ -3,7 +3,7 @@ const flac = require('flac-bindings');
 //const execStream = require('exec-stream');
 const { spawn } = require('child_process');
 const audioServer = require('./audio/audioServer.js');
-const settings = require('./settingsController.js')();
+const settingsController = require('./settingsController.js')();
 const mp = require('./usbController.js');
 
 const formatField = (val) => {
@@ -31,12 +31,12 @@ module.exports.Player = () => {
 
 
     let play = () => {
-        //if (!this.arecord) {
-        console.log('arecord ', '-f', settings.get('bitFormat'), '-c', 2,
-            '-r', settings.get('sampleRate'),'-D', settings.get('defaultCard'));
+        let settings = settingsController.getAll(); 
+        console.log('arecord ', '-f', settings.bitFormat, '-c', 2,
+            '-r', settings.sampleRate,'-D', settings.defaultCard);
         this.arecord = spawn(
-            'arecord', ['-f', settings.get('bitFormat'), '-c', 2,
-                '-r', settings.get('sampleRate'), '-D', settings.get('defaultCard')]
+            'arecord', ['-f', settings.bitFormat, '-c', 2,
+                '-r', settings.sampleRate, '-D', settings.defaultCard]
         );
 
         /*this.arecord.stdout.on('data', (data) =>{
@@ -50,8 +50,8 @@ module.exports.Player = () => {
             console.log(
                 `child process terminated due to receipt of signal ${signal}`);
         });
-
-        this.aplay = spawn('aplay', ['-D', 'plug:default']);
+        
+        this.aplay = spawn('aplay', ['-D', 'default']);
         
         this.arecord.stdout.pipe(this.aplay.stdin);
         playing = true;
@@ -78,7 +78,7 @@ module.exports.Player = () => {
 
     let startRecord = () => {
         var recPath = mp.getRecordingPath();
-        var args = [ path.join(__dirname,'/recordingsWorker.js'), recPath, JSON.stringify(settings.getAll()) ];
+        var args = [ path.join(__dirname,'/recordingsWorker.js'), recPath, JSON.stringify(settingsController.getAll()) ];
         this.recordingsWorker = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
         /*this.fileWriter = new flac.FileEncoder({
             samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'), inputAs32: settings.get('inputAs32'),
@@ -103,11 +103,12 @@ module.exports.Player = () => {
     };
 
     let startServer = () => {
+        let settings = settingsController.getAll();
         this.streamWriter = new flac.StreamEncoder({
-            samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitFormat').replace(/\D/g, ''), inputAs32: settings.get('inputAs32'),
+            samplerate: settings.sampleRate, bitsPerSample: settings.bitFormat.replace(/\D/g, ''), inputAs32: settings.inputAs32,
             compressionLevel: 0
         });
-        server = audioServer.Server(3080, this.streamWriter, settings.get('sampleRate'));
+        server = audioServer.Server(3080, this.streamWriter, settings.sampleRate);
         server.start();
         this.arecord.stdout.pipe(this.streamWriter);
         serving = server.listening();
@@ -144,4 +145,3 @@ module.exports.Player = () => {
         getStatus: getStatus,
     };
 };
-
