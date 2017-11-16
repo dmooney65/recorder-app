@@ -1,28 +1,28 @@
-pcm.!default {
-    type asym
-    capture.pcm 
-    {
-        type plug
-        slave.pcm "softvol"
-    }
-    playback.pcm 
-    {
-        type plug
-        slave.pcm "dmix"
-    }
-}
+#pcm.!default {
+#    type asym
+#    capture.pcm 
+#    {
+#        type plug
+#        slave.pcm "softvol"
+#    }
+#    playback.pcm 
+#    {
+#        type plug
+#        slave.pcm "dmix"
+#    }
+#}
 
 pcm.softvol {
     type softvol
     slave.pcm "dsnoop"
-    control { name "inboost"; card 0; }
+    control { name "InputAmp Capture Volume"; card 0; }
     max_dB 16.0
 }
 
-#pcm.!default {
-#	type hw
-#	card 0
-#}
+pcm.!default {
+	type hw
+	card 0
+}
 
 ctl.!default {
 	type hw

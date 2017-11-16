@@ -1,0 +1,38 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709";
+
+    fragment@0 {
+        target = <&gpio>;
+        __overlay__ {
+            button25_pin: button25_pin {
+                brcm,pins = <25>;     /* gpio25 */
+                brcm,function = <0>; /* input */
+                brcm,pull = <2>;     /* pull-up */
+            };
+        };
+    };
+
+    fragment@1 {
+    target-path = "/soc";
+        __overlay__ {
+            button25: button25 {
+                compatible = "gpio-keys";
+                #address-cells = <1>;
+                #size-cells = <0>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&button25_pin>;
+                status = "okay";
+		autorepeat;
+
+                button@25 {
+                    label = "button gpio25";
+                    linux,code = <4>;
+                    gpios = <&gpio 25 1>;
+                };
+            };
+        };
+    };
+};
