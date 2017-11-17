@@ -31,7 +31,6 @@ let initSettings = (function () {
                 highResFormat.val(data.highResFormat);
                 native24Bit.prop('checked', data.native24Bit == 'true');
                 if(data.audioCard == 'audioinjector'){
-                    console.log('audioinjector');
                     sampleRate.find('option')[4].hidden = true;
                 } else {
                     console.log(data.audioCard);
@@ -47,7 +46,6 @@ let initSettings = (function () {
 
     $('#save').click(function (e) {
         e.preventDefault();
-        console.log('save btn ', native24Bit.prop('checked'));
         var sampling = sampleRate.val().split('/');
         var action = {
             'command': 'set', 'bitDepth': sampling[0], 'sampleRate': sampling[1],
