@@ -32,8 +32,6 @@ let initSettings = (function () {
                 native24Bit.prop('checked', data.native24Bit == 'true');
                 if(data.audioCard == 'audioinjector'){
                     sampleRate.find('option')[4].hidden = true;
-                } else {
-                    console.log(data.audioCard);
                 }
             },
             error: function (err) {

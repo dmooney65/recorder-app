@@ -6,7 +6,7 @@ const audioServer = require('./audio/audioServer.js');
 const settingsController = require('./settingsController.js')();
 const mp = require('./usbController.js');
 
-const formatField = (val) => {
+/*const formatField = (val) => {
     return (0 + val.toString()).slice(-2);
 };
 
@@ -19,7 +19,7 @@ const getDateStr = () => {
     var mm = formatField(date.getMinutes());
     var ss = formatField(date.getSeconds());
     return y + m + d + hh + mm + ss;
-};
+};*/
 
 
 module.exports.Player = () => {
