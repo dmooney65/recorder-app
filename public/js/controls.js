@@ -2,6 +2,7 @@
 let playPauseBtn;
 let recordingBtn;
 let localAudioBtn;
+let ipAddress;
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -60,7 +61,6 @@ let initControls = (function () {
     setupNav(0);
 
 
-    var hostname = $('#hostname').text();
     var audio = document.getElementById('player');
     //audio.crossOrigin = 'anonymous';
     var context;
@@ -94,6 +94,7 @@ let initControls = (function () {
         setRecording(status['recording']);
         setServing(status['serving'], audio);
         setPath(status['recordingsPath']);
+        ipAddress = status['ipAddress'];
     };
 
     playPauseBtn.click(function () {
@@ -127,7 +128,7 @@ let initControls = (function () {
             if (!context) {
                 setupAudioContext();
             }
-            audio.src = 'http://' + hostname + ':3080';
+            audio.src = 'http://' + ipAddress + ':3080';
 
             //disableSecondary(true);
         } else {

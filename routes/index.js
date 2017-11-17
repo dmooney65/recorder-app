@@ -1,14 +1,11 @@
 var express = require('express');
 var router = express.Router();
 //var os = require('os');
-var ip = require('ip');
 var audio = require('../src/audioController.js');
-
-var ipaddress = ip.address();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    res.render('index', { hostname: ipaddress });
+    res.render('index');
 });
 
 var player;

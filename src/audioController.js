@@ -1,6 +1,6 @@
 const path = require('path');
 const flac = require('flac-bindings');
-//const execStream = require('exec-stream');
+const ip = require('ip');
 const { spawn } = require('child_process');
 const audioServer = require('./audio/audioServer.js');
 const settingsController = require('./settingsController.js')();
@@ -132,7 +132,7 @@ module.exports.Player = () => {
     };
 
     let getStatus = () => {
-        return ({ 'playing': playing, 'recording': recording, 'serving': getServing(), 'recordingsPath': mp.getRecordingPath() });
+        return ({ 'playing': playing, 'recording': recording, 'serving': getServing(), 'recordingsPath': mp.getRecordingPath(), 'ipAddress': ip.address() });
     };
 
     return {
