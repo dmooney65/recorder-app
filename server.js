@@ -11,8 +11,9 @@ var recordings = require('./routes/recordings');
 
 var app = express();
 
-//console.log(process.argv[2]);
-process.env.AUDIO_CARD=process.argv[2];
+if(!process.env.AUDIO_CARD){
+    process.env.AUDIO_CARD='default';
+}
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
