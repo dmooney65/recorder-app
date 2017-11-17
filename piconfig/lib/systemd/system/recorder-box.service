@@ -1,7 +1,9 @@
 
 [Unit]
 Description=Node.js Recording App service
-#Requires=After=mysql.service       # Requires the mysql service to run first
+Requires=After=network-online.target       # Requires the network service to run first
+#Wants=network-online.target
+#After=network-online.target
 
 [Service]
 User=pi
