@@ -36,6 +36,7 @@ let setServing = (serving, audio) => {
     } else {
         localAudioBtn.find('span').addClass('text-success');
         if (audio.paused) {
+            audio.load();
             var playPromise = audio.play();
 
             // In browsers that don’t yet support this functionality,

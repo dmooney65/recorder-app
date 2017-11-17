@@ -14,9 +14,10 @@
 
 pcm.softvol {
     type softvol
-    slave.pcm "dsnoop"
+    slave.pcm "hw:0,0"
     control { name "InputAmp Capture Volume"; card 0; }
-    max_dB 16.0
+    min_dB -6.0
+    max_dB 12.0
 }
 
 pcm.!default {

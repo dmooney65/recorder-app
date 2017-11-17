@@ -30,6 +30,12 @@ let initSettings = (function () {
                 defaultCard.val(data.defaultCard);
                 highResFormat.val(data.highResFormat);
                 native24Bit.prop('checked', data.native24Bit == 'true');
+                if(data.audioCard == 'audioinjector'){
+                    console.log('audioinjector');
+                    sampleRate.find('option')[4].hidden = true;
+                } else {
+                    console.log(data.audioCard);
+                }
             },
             error: function (err) {
                 throw err;

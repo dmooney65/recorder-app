@@ -31,12 +31,15 @@ module.exports = () => {
 
 
     let readSettings = () => {
-        settings = fs.readFileAsync(filePath).then(
-            function (data) {
-                settings = JSON.parse(data);
-                return settings;
-            }
-        );
+        settings = fs.readFileAsync(filePath).then((data) => {
+            settings = JSON.parse(data);
+            return settings;
+        }
+        ).catch((error) => {
+            settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': 'plug:default', 'highResFormat': 'flac', 'native24Bit': 'false', 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': 'default' };
+            return settings;
+        });
+        console.log('settings ',settings);
     };
 
     readSettings();
@@ -64,6 +67,11 @@ module.exports = () => {
         } else {
             settings.bitFormat = 'S16_LE';
             settings.inputAs32 = false;
+        }
+        if (process.env.AUDIO_CARD) {
+            settings.audioCard = process.env.AUDIO_CARD;
+        } else {
+            settings.audioCard = 'default';
         }
 
         fs.writeFileAsync(filePath, JSON.stringify(settings)).then(

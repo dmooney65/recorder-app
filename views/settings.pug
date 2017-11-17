@@ -12,8 +12,9 @@ block content
             form.form-horizontal
                 fieldset
                     div.form-group
-                        label.control-label(for="sampleRate") FLAC Bitdepth/Sample Rate
+                        label.control-label(for="sampleRate") Bitdepth/Sample Rate
                         select.form-control(id="sampleRate")
+                            option(value="16/44100") 16bit 44.1 Khz                               
                             option(value="16/48000") 16bit 48 Khz                               
                             option(value="24/48000") 24bit 48 Khz
                             option(value="24/96000") 24bit 96 Khz
@@ -26,20 +27,20 @@ block content
                             option(value="2") ~190 kbps
                             option(value="3") ~175 kbps
                     div.form-group
-                        label.control-label(for="defaultCard") Recording card
-                        select.form-control(id="defaultCard")
-                            option(value="plug:softvol") Plug device
-                            option(value="hw:0,0") Hardware device
-                    div.form-group
                         label.control-label(for="highResFormat") Format for recordings
                         select.form-control(id="highResFormat")
                             option(value="flac") 16/24bit FLAC
                             option(value="wav") 16/32bit WAV
+                    div.form-group
+                        label.control-label(for="defaultCard") Recording card
+                        select.form-control(id="defaultCard")
+                            option(value="hw:0,0") Hardware device
+                            option(value="plug:default") Plug device 
+                            option(value="plug:softvol") Softvol device (requires custom config)
                         div.checkbox
                             label
                                 input(type="checkbox" id="native24Bit") 
-                                span Hardware 24bit Support?
-                    
+                                span 24bit Hardware Support      
                 fieldset
                     div.form-group
                         button.btn.btn-primary(type="button" id="save") Save
