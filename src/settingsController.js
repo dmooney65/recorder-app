@@ -36,10 +36,10 @@ module.exports = () => {
             return settings;
         }
         ).catch((error) => {
+            console.warn(error);
             settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': 'plug:default', 'highResFormat': 'flac', 'native24Bit': 'false', 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': 'default' };
             return settings;
         });
-        console.log('settings ',settings);
     };
 
     readSettings();
