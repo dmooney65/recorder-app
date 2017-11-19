@@ -1,9 +1,7 @@
 
 [Unit]
 Description=Node.js Recording App service
-Requires=After=network-online.target       # Requires the network service to run first
-#Wants=network-online.target
-#After=network-online.target
+Requires=network-online.target       # Requires the network service to run first
 
 [Service]
 User=pi

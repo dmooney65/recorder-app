@@ -1,0 +1,24 @@
+
+[Unit]
+Description=Node.js Button service
+Requires=recorder-app.service       # Requires the network service to run first
+
+[Service]
+User=pi
+ExecStart=/usr/bin/node /home/pi/source/recorder-app/controlScripts/audioinjector/monitorButton.js
+# Required on some systems
+# WorkingDirectory=/home/pi/source/recorder-app/controlScripts/audioinjector
+Restart=always
+ # Restart service after 10 seconds if node service crashes
+ RestartSec=10
+ # Output to syslog
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=nodejs-button-led
+#User=<alternate user>
+#Group=<alternate group>
+Environment=NODE_ENV=production PORT=3000
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target
