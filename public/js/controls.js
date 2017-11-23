@@ -2,14 +2,15 @@
 let playPauseBtn;
 let recordingBtn;
 let localAudioBtn;
-let ipAddress;
+
 
 document.addEventListener('DOMContentLoaded', function () {
 
     playPauseBtn = $('#play-pause');
     recordingBtn = $('#record');
     localAudioBtn = $('#localaudio');
-    initControls(); // add listers
+    
+    initControls();    
 
 });
 
@@ -32,10 +33,10 @@ let setRecording = (recording) => {
 let setServing = (serving, audio) => {
     if (!serving) {
         localAudioBtn.find('span').removeClass('text-success');
-        audio.pause();        
+        audio.pause();
     } else {
         localAudioBtn.find('span').addClass('text-success');
-        if (audio.paused) {
+        window.setTimeout = (() => {
             //audio.load();
             var playPromise = audio.play();
 
@@ -45,11 +46,11 @@ let setServing = (serving, audio) => {
                 playPromise.then(function () {
                     // Automatic playback started!
                 }).catch(function (error) {
-                    console.error(error);
-                    //audio.play();
+                    //console.error(error);
+                    audio.play();
                 });
             }
-        }
+        }, 500);
     }
 };
 
@@ -84,19 +85,19 @@ let initControls = (function () {
             }
         });
     });
-
-    window.setInterval(function () {
-        doPost('getStatus');
-    }, 2000);
-
-
+    
     let setStatus = (status) => {
         setPlaying(status['playing']);
         setRecording(status['recording']);
         setServing(status['serving'], audio);
         setPath(status['recordingsPath']);
-        ipAddress = status['ipAddress'];
     };
+
+    
+
+    window.setInterval(function () {
+        doPost('getStatus');
+    }, 2000);
 
     playPauseBtn.click(function () {
         if (!$(this).find('span').hasClass('glyphicon-stop')) {
@@ -129,7 +130,7 @@ let initControls = (function () {
             if (!context) {
                 setupAudioContext();
             }
-            audio.src = 'http://' + ipAddress + ':3080';
+            audio.src = 'http://' + window.location.hostname + ':3080';
 
             //disableSecondary(true);
         } else {
@@ -139,7 +140,16 @@ let initControls = (function () {
         }
     });
 
-    function setupAudioContext() {
+    var exampleSocket = new WebSocket(window.location.href.replace('http','ws'));
+    //exampleSocket.onopen(console.log('open'));
+    exampleSocket.onopen = function (event) {
+        exampleSocket.send('hello');
+    };
+    exampleSocket.onmessage = function (event) {
+        console.log(event.data);
+    };
+
+    let setupAudioContext = () => {
         // Create a new <audio> tag.
         canvasContext = document.getElementById('meter').getContext('2d');
         context = new (window.AudioContext || window.webkitAudioContext)();
@@ -156,9 +166,9 @@ let initControls = (function () {
         // Connect the audio graph.
         source.connect(analyser);
         analyser.connect(context.destination);
-    }
+    };
 
-    function drawLoop(time) {
+    let drawLoop = (time) => {
         // clear the background
         canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
 
@@ -173,7 +183,7 @@ let initControls = (function () {
 
         // set up the next visual callback
         rafID = window.requestAnimationFrame(drawLoop);
-    }
+    };
 
 });
 

@@ -4,23 +4,28 @@ const { exec } = require('child_process');
 
 const Button = require('gpio-button');
 const button = new Button('button25');
-
 let time = 0;
 let prev = 'release';
 let pressed = 0;
 let hold = 0;
 
-process.on('SIGTERM', function() {
+process.on('message', (msg) => {
+    switch (msg.command) {
+    case 'blinkLed': blinkLed(msg.arg); break;
+    }
+});
+
+process.on('SIGTERM', function () {
     //console.log('SIGTERM');
-    led.unexport();    
+    led.unexport();
     // do whatever to terminate properly
     // at worst, just 'exit(0)'
     process.exit(0);
 });
 
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
     //console.log('SIGINT');
-    led.unexport();    
+    led.unexport();
     // do whatever to terminate properly
     // at worst, just 'exit(0)'
     process.exit(0);
@@ -40,7 +45,7 @@ button.on('press', function () {
 button.on('hold', function () {
     pressed = 0;
     if (time > 1000) {
-        blinkLed(200, 1);
+        blinkLed(200);
         time = 0;
         hold++;
     }
@@ -49,29 +54,34 @@ button.on('hold', function () {
 });
 
 button.on('release', function () {
-    if(hold > 0){
+    if (hold > 0) {
         doHoldAction(hold);
-        //blinkLed(100, 3);
     }
     time = 0;
     hold = 0;
     prev = 'release';
 });
 
-var blinkLed = (blinkTime, blinkCycles) => {
-    
+var blinkLedRepeat = (blinkTime, blinkCycles) => {
+
     var interval = setInterval(() => {
         led.writeSync(1);
         setTimeout(() => {
             led.writeSync(0);
         }, blinkTime);
     }, blinkTime + 100);
-    
+
     setTimeout(() => {
         clearInterval(interval);
     }, (blinkTime + 101) * (blinkCycles));
 };
 
+var blinkLed = (blinkTime) => {
+    led.writeSync(1);
+    setTimeout(() => {
+        led.writeSync(0);
+    }, blinkTime);
+};
 
 var countPresses = () => {
     // If button not pressed within timeout, stop adding to pressed count and do actions
@@ -89,18 +99,18 @@ var countPresses = () => {
 var doClickAction = (presses) => {
     switch (presses) {
     case 1:
-        exec(__dirname+'/togglePlaying.sh',
+        exec(__dirname + '/togglePlaying.sh',
             {
                 stdio: 'ignore'
             });
-        blinkLed(150, presses);
+        blinkLedRepeat(150, presses);
         break;
     case 2:
-        exec(__dirname+'/toggleRecording.sh',
+        exec(__dirname + '/toggleRecording.sh',
             {
                 stdio: 'ignore'
             });
-        blinkLed(150, presses);
+        blinkLedRepeat(150, presses);
         break;
     default:
         console.log('no action');
@@ -112,13 +122,13 @@ var doHoldAction = (held) => {
     console.log('held times ', held);
     switch (held) {
     case 5:
-        blinkLed(150, held);
+        blinkLedRepeat(150, held);
         setTimeout(() => {
             exec('sudo shutdown now',
                 {
                     stdio: 'ignore'
                 });
-        },2000);
+        }, 2000);
         break;
     default:
         console.log('no action');

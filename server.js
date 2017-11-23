@@ -1,15 +1,17 @@
-var path = require('path');
-var express = require('express');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
-var index = require('./routes/index');
-var settings = require('./routes/settings');
-var recordings = require('./routes/recordings');
-
-var app = express();
+const path = require('path');
+const express = require('express');
+const http = require('http');
+const WebSocket = require('ws');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const { fork } = require('child_process');
+const index = require('./routes/index');
+const settings = require('./routes/settings');
+const recordings = require('./routes/recordings');
+const url = require('url');
+const app = express();
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -41,7 +43,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -51,16 +53,48 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-var listener = app.listen(3000);
+const server = http.createServer(app);
+server.listen(3000, function listening() {
+    console.log('Listening on %d', server.address().port, ' host', server.address().address);
+});
+const wss = new WebSocket.Server({ server });
+
+//var listener = app.listen(3000);
 
 //module.exports = listener;
 
-//var listener = require('./../server.js');
-var address = listener.address();
-var host = address.address;
-var port = address.port;
-console.log('Listening on ' + host + ':' + port);
+//var address = listener.address();
+//var host = address.address;
+//var port = address.port;
+//console.log('Listening on ' + host + ':' + port);
 
-//let dec2hex = (num) => {
-//    return parseInt(num, 10).toString(16);    
-//};
+
+
+/*wss.on('connection', (socket) => {
+    socket.emit('hello', {
+        greeting: 'Hello Paul'
+    });
+});*/
+
+
+
+//server.on('upgrade', wss.handleUpgrade);
+wss.on('connection', function connection(ws, req) {
+    const location = url.parse(req.url, true);
+    console.log(location);
+    
+    // You might use location.query.access_token to authenticate or share sessions
+    // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
+        ws.send('something');
+    });
+
+    //ws.send('something');
+    
+});
+
+if (process.env.AUDIO_CARD == 'audioinjector') {
+    global.buttonLedWorker = fork(__dirname + '/controlScripts/audioinjector/ButtonLedWorker.js', []);
+}   

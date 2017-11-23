@@ -21,6 +21,7 @@
     "onoff": "^1.1.8",
     "pug": "^2.0.0-rc.4",
     "serve-favicon": "~2.4.5",
-    "waveheader": "0.0.2"
+    "waveheader": "0.0.2",
+    "ws": "^3.3.2"
   }
 }
