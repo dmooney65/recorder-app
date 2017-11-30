@@ -86,7 +86,8 @@ let initControls = (function () {
         });
     });
     
-    let setStatus = (status) => {
+    let setStatus = (data) => {
+        var status = data.status;
         setPlaying(status['playing']);
         setRecording(status['recording']);
         setServing(status['serving'], audio);
@@ -158,10 +159,6 @@ let initControls = (function () {
         meter = createAudioMeter(context, 0.98, 0.05, 500);
         source.connect(meter);
         drawLoop();
-
-        //var filter = context.createBiquadFilter();
-        //filter.type = 'highpass';
-        //filter.frequency.value = 500;
 
         // Connect the audio graph.
         source.connect(analyser);

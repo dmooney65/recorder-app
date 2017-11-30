@@ -57,7 +57,7 @@ const server = http.createServer(app);
 server.listen(3000, function listening() {
     console.log('Listening on %d', server.address().port, ' host', server.address().address);
 });
-const wss = new WebSocket.Server({ server });
+global.wss = new WebSocket.Server({ server });
 
 //var listener = app.listen(3000);
 
@@ -79,10 +79,10 @@ const wss = new WebSocket.Server({ server });
 
 
 //server.on('upgrade', wss.handleUpgrade);
-wss.on('connection', function connection(ws, req) {
-    const location = url.parse(req.url, true);
-    console.log(location);
-    
+global.wss.on('connection', function connection(ws, req) {
+    //const location = url.parse(req.url, true);
+    //console.log(location);
+
     // You might use location.query.access_token to authenticate or share sessions
     // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
@@ -92,8 +92,16 @@ wss.on('connection', function connection(ws, req) {
     });
 
     //ws.send('something');
-    
+
 });
+
+global.wss.broadcast = function broadcast(data) {
+    global.wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(data);
+        }
+    });
+};
 
 if (process.env.AUDIO_CARD == 'audioinjector') {
     global.buttonLedWorker = fork(__dirname + '/controlScripts/audioinjector/ButtonLedWorker.js', []);

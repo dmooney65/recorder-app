@@ -29,7 +29,7 @@ module.exports.Player = () => {
     var recording = false;
     var serving = false;
     var playing = false;
-    var server;     
+    var server;
 
 
     let play = () => {
@@ -53,15 +53,17 @@ module.exports.Player = () => {
                 `child process terminated due to receipt of signal ${signal}`);
         });
 
-        if (settings.audioCard == 'audioinjector') {
-            this.transform = ClipDetect({ bitformat: settings.bitFormat });
-            pass.on('data', (chunk) => {
-                if (chunk.toString() == 'true') {
+        this.transform = ClipDetect({ inputBitDepth: settings.bitFormat.replace(/\D/g, '') });
+        pass.on('data', (chunk) => {
+            if (chunk.toString() == 'true') {
+                global.wss.broadcast(JSON.stringify({ clipping: true }));
+                if (settings.audioCard == 'audioinjector') {
                     global.buttonLedWorker.send({ command: 'blinkLed', arg: 500 });
                 }
-            });
-            this.arecord.stdout.pipe(this.transform, { end: false }).pipe(pass, { end: false });
-        }
+            }
+        });
+        this.arecord.stdout.pipe(this.transform, { end: false }).pipe(pass, { end: false });
+
 
         this.aplay = spawn('aplay', ['-D', 'default']);
 
@@ -143,7 +145,7 @@ module.exports.Player = () => {
     };
 
     let getStatus = () => {
-        return ({ 'playing': playing, 'recording': recording, 'serving': getServing(), 'recordingsPath': mp.getRecordingPath() });
+        return ({ status: { 'playing': playing, 'recording': recording, 'serving': getServing(), 'recordingsPath': mp.getRecordingPath() } });
     };
 
     return {

@@ -10,8 +10,24 @@ function ClipDetect(options) {
     options = options || {};
     this.inputChannels = options.inputChannels || 2;
     this.inputBitDepth = options.inputBitDepth || 16;
-    this.outputBitDepth = options.outputBitDepth || this.inputBitDepth;
-    if (!options) options = {};
+    //this.outputBitDepth = options.outputBitDepth || this.inputBitDepth;
+    //if (!options) options = {};
+    this.offset = 0;
+    this.byteLen = 2;
+    this.readLen = 2;
+    this.MAX = 32767;
+    //this.MAX = 65534
+    this.MIN = -32768;
+    if (this.inputBitDepth == 32) {
+        this.offset = 1;
+    }
+    if (this.inputBitDepth != 16) {
+        this.MAX = 8388607;
+        //this.MAX = 16777214
+        this.MIN = -8388608;
+        this.byteLen = 4;
+        this.readLen = 3;
+    }
     options.objectMode = true;
     Transform.call(this, options);
 }
@@ -19,35 +35,30 @@ function ClipDetect(options) {
 inherits(ClipDetect, Transform);
 
 ClipDetect.prototype._transform = function _transform(chunk, encoding, callback) {
-    var max = 0;// = -32767;
-    var min = 0;// = 32767;
+    var max = 0;// 
+    var min = 0;// 
     var value;
-    var MAX = Math.pow(2, this.inputBitDepth - 1) - 1;
-    var MIN = -Math.pow(2, this.inputBitDepth - 1);
-    //console.log(MAX);
-    //console.log(buffer.readIntLE(0, this.inputBitDepth / 8));
-    //try {
 
-    let samples = Math.trunc(chunk.length / this.inputBitDepth);
-    //console.log(chunk.length);
-    for (var i = 0; i < samples; i++) {
-        //console.log(i);        
-        value = chunk.readIntLE(i, this.inputBitDepth / 8);
+
+    let samples = Math.trunc(chunk.length / this.byteLen);
+    for (var i = 0; i < samples;) {
+        value = chunk.readIntLE(i + this.offset, this.readLen);
         if (value > max) {
-            if ((value / MAX) > 0.98) {
-                //console.log(value / MAX);
+            //value /= this.MAX;
+            if ((value / this.MAX) > 0.98) {
+                console.log(value);
                 max = value;
                 break;
             }
         }
         if (value < min) {
-            if ((value / MIN) > 0.98) {
-                //console.log(value / MIN);
+            if ((value / this.MIN) > 0.98) {
+                //console.log(value);
                 min = value;
                 break;
             }
         }
-        i += (this.inputBitDepth / 8) - 1;
+        i += this.byteLen;
     }
 
     if (min != 0 || max != 0) {
