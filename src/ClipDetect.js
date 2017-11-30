@@ -46,7 +46,7 @@ ClipDetect.prototype._transform = function _transform(chunk, encoding, callback)
         if (value > max) {
             //value /= this.MAX;
             if ((value / this.MAX) > 0.98) {
-                console.log(value);
+                //console.log(value);
                 max = value;
                 break;
             }
