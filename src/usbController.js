@@ -2,14 +2,15 @@ var spawn = require('child_process').spawn;
 var rl = require('readline');
 var path = require('path');
 var os = require('os');
-
+var audio = require('./audioController.js');
 var filePath;
 var monitor = require('node-usb-detection');
 
 
 monitor.change(function() {
-    setTimeout(function(){ findRecordingPath(); }, 3000);
-    //console.log('device changed:\n', filePath);
+    setTimeout(function(){ 
+        findRecordingPath(); 
+    }, 2000);
 });
 
 var read = () => {
@@ -30,13 +31,19 @@ var read = () => {
     });
 };
 
-let findRecordingPath = () => {
+
+var findRecordingPath = () => {
+
     read().then(function (data) {
+        var player = audio.Player();
+        var resp;
         if (data.length > 0) {
-            filePath = path.join(data[0], '/');
+            resp = path.join(data[0], '/');
         } else {
-            filePath = path.join(os.homedir(), '/Music/');
+            resp = path.join(os.homedir(), '/Music/');
         }
+        filePath = resp;
+        player.setRecordingsPath(resp);
     });
 };
 findRecordingPath();

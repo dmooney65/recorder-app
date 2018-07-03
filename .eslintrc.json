@@ -22,5 +22,10 @@
             "always"
         ],
         "no-console": 0
+    },
+    "globals": {
+        "$": false,
+        "setupNav": false,
+        "createAudioMeter": false
     }
 }

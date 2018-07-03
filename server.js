@@ -10,7 +10,6 @@ const { fork } = require('child_process');
 const index = require('./routes/index');
 const settings = require('./routes/settings');
 const recordings = require('./routes/recordings');
-const url = require('url');
 const app = express();
 
 app.set('view engine', 'pug');
@@ -57,46 +56,14 @@ const server = http.createServer(app);
 server.listen(3000, function listening() {
     console.log('Listening on %d', server.address().port, ' host', server.address().address);
 });
+
+//Most wss functions are in audioController.js 
 global.wss = new WebSocket.Server({ server });
 
-//var listener = app.listen(3000);
-
-//module.exports = listener;
-
-//var address = listener.address();
-//var host = address.address;
-//var port = address.port;
-//console.log('Listening on ' + host + ':' + port);
-
-
-
-/*wss.on('connection', (socket) => {
-    socket.emit('hello', {
-        greeting: 'Hello Paul'
-    });
-});*/
-
-
-
-//server.on('upgrade', wss.handleUpgrade);
-global.wss.on('connection', function connection(ws, req) {
-    //const location = url.parse(req.url, true);
-    //console.log(location);
-
-    // You might use location.query.access_token to authenticate or share sessions
-    // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-
-    ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
-        ws.send('something');
-    });
-
-    //ws.send('something');
-
-});
 
 global.wss.broadcast = function broadcast(data) {
     global.wss.clients.forEach(function each(client) {
+        //console.log('broadcasting' + data);
         if (client.readyState === WebSocket.OPEN) {
             client.send(data);
         }

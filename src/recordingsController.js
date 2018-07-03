@@ -1,11 +1,11 @@
 const fs = require('fs');
-var mi = require('mediainfo-wrapper');
+var mediaInfo = require('mediainfo-wrapper');
 const { spawn } = require('child_process');
 const settings = require('./settingsController.js')();
 
 module.exports.readFiles = (dir) => {
 
-    return mi({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.wav', '**/*.mp3').then(function (data) {
+    return mediaInfo({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.wav', '**/*.mp3').then(function (data) {
         var ret = [];
         for (var i in data) {
             var fullPath = dir + data[i].file;

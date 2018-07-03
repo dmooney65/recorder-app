@@ -1,24 +1,26 @@
 
 let playPauseBtn;
 let recordingBtn;
-let localAudioBtn;
+let clipDetect;
 
 
 document.addEventListener('DOMContentLoaded', function () {
 
     playPauseBtn = $('#play-pause');
     recordingBtn = $('#record');
-    localAudioBtn = $('#localaudio');
+    clipDetect = $('#clipDetect').find('span');
     
-    initControls();    
+    initControls();
 
 });
 
 let setPlaying = (playing) => {
     if (!playing) {
         playPauseBtn.find('span').removeClass('glyphicon-stop').addClass('glyphicon-play');
+        clipDetect.removeClass('text-success');
     } else {
         playPauseBtn.find('span').removeClass('glyphicon-play').addClass('glyphicon-stop');
+        clipDetect.addClass('text-success');
     }
 };
 
@@ -30,29 +32,6 @@ let setRecording = (recording) => {
     }
 };
 
-let setServing = (serving, audio) => {
-    if (!serving) {
-        localAudioBtn.find('span').removeClass('text-success');
-        audio.pause();
-    } else {
-        localAudioBtn.find('span').addClass('text-success');
-        window.setTimeout = (() => {
-            //audio.load();
-            var playPromise = audio.play();
-
-            // In browsers that don’t yet support this functionality,
-            // playPromise won’t be defined.
-            if (playPromise !== undefined) {
-                playPromise.then(function () {
-                    // Automatic playback started!
-                }).catch(function (error) {
-                    //console.error(error);
-                    audio.play();
-                });
-            }
-        }, 500);
-    }
-};
 
 let setPath = (recordingsPath) => {
     $('#path').text(recordingsPath);
@@ -63,23 +42,20 @@ let initControls = (function () {
     setupNav(0);
 
 
-    var audio = document.getElementById('player');
-    //audio.crossOrigin = 'anonymous';
-    var context;
     var meter = null;
     var canvasContext = null;
     var WIDTH = 300;
     var HEIGHT = 50;
-    var rafID = null;
+    this.rafID;
 
     var doPost = (function (action) {
         $.ajax({
             type: 'POST',
             data: { 'command': action },
             url: '/audio',
-            success: function (data) {
+            /*success: function (data) {
                 setStatus(data);
-            },
+            },*/
             error: function (err) {
                 throw err;
             }
@@ -87,18 +63,16 @@ let initControls = (function () {
     });
     
     let setStatus = (data) => {
-        var status = data.status;
-        setPlaying(status['playing']);
-        setRecording(status['recording']);
-        setServing(status['serving'], audio);
-        setPath(status['recordingsPath']);
+        setPlaying(data.playing);
+        setRecording(data.recording);
+        setPath(data.recordingsPath);
     };
 
     
 
-    window.setInterval(function () {
+    /*window.setInterval(function () {
         doPost('getStatus');
-    }, 2000);
+    }, 2000);*/
 
     playPauseBtn.click(function () {
         if (!$(this).find('span').hasClass('glyphicon-stop')) {
@@ -123,34 +97,32 @@ let initControls = (function () {
         }
     });
 
-    localAudioBtn.click(function () {
-        var span = $(this).find('span');
-        if (!span.hasClass('text-success')) {
-            doPost('startServer');
-            doPost('getStatus');
-            if (!context) {
-                setupAudioContext();
-            }
-            audio.src = 'http://' + window.location.hostname + ':3080';
-
-            //disableSecondary(true);
-        } else {
-            doPost('stopServer');
-            doPost('getStatus');
-            //disableSecondary(false);
-        }
-    });
-
-    var exampleSocket = new WebSocket(window.location.href.replace('http','ws'));
+    var controlSocket = new WebSocket(window.location.href.replace('http','ws'));
     //exampleSocket.onopen(console.log('open'));
-    exampleSocket.onopen = function (event) {
-        exampleSocket.send('hello');
-    };
-    exampleSocket.onmessage = function (event) {
-        console.log(event.data);
+    controlSocket.onopen = function (event) {
+        controlSocket.send('getStatus', event);
     };
 
-    let setupAudioContext = () => {
+    var redTime = animate();
+
+    controlSocket.onmessage = function (event) {
+        var data = JSON.parse(event.data);
+        //console.log(data.toString());
+        if(data.hasOwnProperty('clipping')){
+            clipDetect.addClass('text-danger');
+            clearInterval(redTime);
+            redTime = animate();
+        } else if(data.hasOwnProperty('playing')){
+            setStatus(data);
+        }
+    };
+
+    function animate() {
+        return setInterval(function() {
+            clipDetect.removeClass('text-danger');
+        }, 500);
+    }
+    /*let setupAudioContext = () => {
         // Create a new <audio> tag.
         canvasContext = document.getElementById('meter').getContext('2d');
         context = new (window.AudioContext || window.webkitAudioContext)();
@@ -163,9 +135,9 @@ let initControls = (function () {
         // Connect the audio graph.
         source.connect(analyser);
         analyser.connect(context.destination);
-    };
+    };*/
 
-    let drawLoop = (time) => {
+    let drawLoop = () => {
         // clear the background
         canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
 
@@ -179,8 +151,11 @@ let initControls = (function () {
         canvasContext.fillRect(0, 0, meter.volume * WIDTH * 1.4, HEIGHT);
 
         // set up the next visual callback
-        rafID = window.requestAnimationFrame(drawLoop);
+        this.rafID = window.requestAnimationFrame(drawLoop);
     };
+
+
+    doPost('getStatus');
 
 });
 

@@ -1,36 +1,17 @@
 const path = require('path');
-const flac = require('flac-bindings');
 const { spawn } = require('child_process');
-const audioServer = require('./audio/audioServer.js');
+//const audioServer = require('./audio/audioServer.js');
 const settingsController = require('./settingsController.js')();
-const mp = require('./usbController.js');
+const mediaPath = require('./usbController.js');
 const ClipDetect = require('./ClipDetect.js');
 const { PassThrough } = require('stream');
 const pass = new PassThrough();
 
-/*const formatField = (val) => {
-    return (0 + val.toString()).slice(-2);
-};
-
-const getDateStr = () => {
-    var date = new Date();
-    var y = date.getFullYear().toString();
-    var m = formatField(date.getMonth() + 1);
-    var d = formatField(date.getDate());
-    var hh = formatField(date.getHours());
-    var mm = formatField(date.getMinutes());
-    var ss = formatField(date.getSeconds());
-    return y + m + d + hh + mm + ss;
-};*/
-
-
+this.recording = false;
+this.playing = false;
+this.recPath = mediaPath.getRecordingPath();
+    
 module.exports.Player = () => {
-
-    var recording = false;
-    var serving = false;
-    var playing = false;
-    var server;
-
 
     let play = () => {
         let settings = settingsController.getAll();
@@ -68,40 +49,35 @@ module.exports.Player = () => {
         this.aplay = spawn('aplay', ['-D', 'default']);
 
         this.arecord.stdout.pipe(this.aplay.stdin);
-        playing = true;
-        return getStatus();
+        this.playing = true;
+        broadcastStatus();
     };
 
     let stop = () => {
         //this.arecord.pause();
-        if (recording) {
+        if (this.recording) {
             stopRecord();
         }
-        if (serving) {
+        /*if (serving) {
             stopServer();
-        }
+        }*/
         this.arecord.stdout.unpipe(this.aplay);
         this.arecord.kill('SIGHUP');
         //var kill = execStream('killall', ['arecord']);
         //kill.end();
         //this.aplay.end();
-        playing = false;
-        return getStatus();
+        this.playing = false;
+        broadcastStatus();
     };
 
     let startRecord = () => {
-        var recPath = mp.getRecordingPath();
-        var args = [path.join(__dirname, '/recordingsWorker.js'), recPath, JSON.stringify(settingsController.getAll())];
+        //var recPath = mediaPath.getRecordingPath();
+        var args = [path.join(__dirname, '/recordingsWorker.js'), this.recPath, JSON.stringify(settingsController.getAll())];
         this.recordingsWorker = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
-        /*this.fileWriter = new flac.FileEncoder({
-            samplerate: settings.get('sampleRate'), bitsPerSample: settings.get('bitDepth'), inputAs32: settings.get('inputAs32'),
-            compressionLevel: settings.get('compressionLevel'),
-            file: path.join(mp.getRecordingPath(), getDateStr() + '_rec.flac')
-        });
-        this.arecord.stdout.pipe(this.fileWriter);*/
+        
         this.arecord.stdout.pipe(this.recordingsWorker.stdin);
-        recording = true;
-        return getStatus();
+        this.recording = true;
+        broadcastStatus();
     };
 
 
@@ -111,41 +87,38 @@ module.exports.Player = () => {
         //this.fileWriter.end();
         this.arecord.stdout.unpipe(this.recordingsWorker.stdin);
         this.recordingsWorker.send('end');
-        recording = false;
-        return getStatus();
+        this.recording = false;
+        broadcastStatus();
     };
 
-    let startServer = () => {
-        let settings = settingsController.getAll();
-        this.streamWriter = new flac.StreamEncoder({
-            samplerate: settings.sampleRate, bitsPerSample: settings.bitFormat.replace(/\D/g, ''), inputAs32: settings.inputAs32,
-            compressionLevel: 0
-        });
-        server = audioServer.Server(3080, this.streamWriter, settings.sampleRate);
-        server.start();
-        this.arecord.stdout.pipe(this.streamWriter, { end: false });
-        serving = server.listening();
-        return getStatus();
+    let setRecordingsPath = (path) => {
+        this.recPath = path;
+        broadcastStatus();
     };
 
-    let stopServer = () => {
-        this.arecord.stdout.unpipe(this.streamWriter);
-        server.stop();
-        serving = false;
-        return getStatus();
-    };
+    global.wss.on('connection', function connection() {
+        //const location = url.parse(req.url, true);
+        //console.log('Connection request from '+req.toString());
+        // You might use location.query.access_token to authenticate or share sessions
+        // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+        broadcastStatus();
+        //ws.send(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } ));
+    
+    });
 
-    let getServing = () => {
-        if (server) {
-            serving = server.listening();
-            return serving;
-        } else {
-            return false;
-        }
-    };
+    global.wss.on('message', function connection(message) {
+        //const location = url.parse(req.url, true);
+        console.log('message from '+message.toString());
+        // You might use location.query.access_token to authenticate or share sessions
+        // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+        //broadcastStatus();
+        //wss.send(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } ));
+    });
 
-    let getStatus = () => {
-        return ({ status: { 'playing': playing, 'recording': recording, 'serving': getServing(), 'recordingsPath': mp.getRecordingPath() } });
+    let broadcastStatus = () => {
+        //console.log(this.playing);
+        //console.log(this.recPath);
+        global.wss.broadcast(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } ));
     };
 
     return {
@@ -153,8 +126,7 @@ module.exports.Player = () => {
         stop: stop,
         startRecord: startRecord,
         stopRecord: stopRecord,
-        startServer: startServer,
-        stopServer: stopServer,
-        getStatus: getStatus,
+        getStatus: broadcastStatus,
+        setRecordingsPath: setRecordingsPath
     };
 };

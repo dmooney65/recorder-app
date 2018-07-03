@@ -1,7 +1,6 @@
 #!/bin/bash
 
 source /home/pi/source/recorder-app/controlScripts/audioinjector/led.sh
-#source /usr/local/pisound/scripts/common/common.sh
 
 PLAYING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".status" | jq ".playing"`
 

@@ -17,19 +17,19 @@ let initNav = () => {
     $(navs[1]).click(function () {
         if (!$(this).hasClass('disabled')) {
             window.location.href = '/settings';
-        };
+        }
     });
 
     $(navs[2]).click(function () {
         if (!$(this).hasClass('disabled')) {
             window.location.href = '/recordings';
-        };
+        }
     });
 
 
 };
 
-let setupNav = (index) => {
+let setupNav = (index) => { // eslint-disable-line no-unused-vars
     $(navs).removeClass('active');
     var nav = $($(navs)[index]);
     nav.addClass('active');
@@ -39,6 +39,7 @@ let setupNav = (index) => {
 
 };
 
+/*
 let disableSecondary = (trueFalse) => {
     for (var i = 1, len = navs.length; i < len; i++) {
         if (trueFalse) {
@@ -47,4 +48,4 @@ let disableSecondary = (trueFalse) => {
             $(navs[i]).removeClass('disabled');
         }
     }
-};
+};*/
