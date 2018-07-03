@@ -35,25 +35,25 @@ function ClipDetect(options) {
 inherits(ClipDetect, Transform);
 
 ClipDetect.prototype._transform = function _transform(chunk, encoding, callback) {
-    var max = 0;// 
-    var min = 0;// 
+    var max = 0; 
+    var min = 0; 
     var value;
+    //Clipping assumed if level is over 0.98
+    var clipLevel = 0.98;
 
 
     let samples = Math.trunc(chunk.length / this.byteLen);
     for (var i = 0; i < samples;) {
         value = chunk.readIntLE(i + this.offset, this.readLen);
+        
         if (value > max) {
-            //value /= this.MAX;
-            if ((value / this.MAX) > 0.98) {
-                //console.log(value);
+            if ((value / this.MAX) > clipLevel) {
                 max = value;
                 break;
             }
         }
         if (value < min) {
-            if ((value / this.MIN) > 0.98) {
-                //console.log(value);
+            if ((value / this.MIN) > clipLevel) {
                 min = value;
                 break;
             }
@@ -64,7 +64,6 @@ ClipDetect.prototype._transform = function _transform(chunk, encoding, callback)
     if (min != 0 || max != 0) {
         this.push('true');
     } else {
-        //console.log('empty');
         this.push('false');
     }
     callback();
