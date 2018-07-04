@@ -3,8 +3,8 @@
 #source ./led.sh
 source /usr/local/pisound/scripts/common/common.sh
 
-PLAYING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".status" | jq ".playing"`
-RECORDING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".status" | jq ".recording"`
+PLAYING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".playing"`
+RECORDING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".recording"`
 
 
 if [ "${PLAYING}" == true ]; then

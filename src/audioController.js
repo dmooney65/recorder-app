@@ -44,7 +44,6 @@ module.exports.Player = () => {
         this.arecord.stdout.pipe(this.aplay.stdin);
         this.playing = true;
         broadcastStatus();
-        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
     };
 
     let stop = () => {
@@ -58,7 +57,6 @@ module.exports.Player = () => {
         
         this.playing = false;
         broadcastStatus();
-        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
     };
 
     let startRecord = () => {
@@ -68,7 +66,6 @@ module.exports.Player = () => {
         this.arecord.stdout.pipe(this.recordingsWorker.stdin);
         this.recording = true;
         broadcastStatus();
-        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
     };
 
 
@@ -77,7 +74,6 @@ module.exports.Player = () => {
         this.recordingsWorker.send('end');
         this.recording = false;
         broadcastStatus();
-        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
     };
 
     let setRecordingsPath = (path) => {
@@ -106,12 +102,16 @@ module.exports.Player = () => {
         global.wss.broadcast(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } ));
     };
 
+    let getStatus = () => {
+        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
+    };
+
     return {
         play: play,
         stop: stop,
         startRecord: startRecord,
         stopRecord: stopRecord,
-        getStatus: broadcastStatus,
+        getStatus: getStatus,
         setRecordingsPath: setRecordingsPath
     };
 };

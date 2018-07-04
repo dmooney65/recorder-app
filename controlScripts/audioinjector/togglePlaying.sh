@@ -1,8 +1,8 @@
 #!/bin/bash
 
-source /home/pi/source/recorder-app/controlScripts/audioinjector/led.sh
+source ./led.sh
 
-PLAYING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".status" | jq ".playing"`
+PLAYING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".playing"`
 
 
 if [ "${PLAYING}" == true ]; then
@@ -10,7 +10,7 @@ if [ "${PLAYING}" == true ]; then
     flash_leds 30
 else
     COMMAND='play'
-    #flash_leds 10
+    flash_leds 10
     #sleep 0.5
     #flash_leds 10
 fi

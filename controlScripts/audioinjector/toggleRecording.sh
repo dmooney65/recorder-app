@@ -1,9 +1,9 @@
 #!/bin/bash
 
-source /home/pi/source/recorder-app/controlScripts/audioinjector/led.sh
+source ./led.sh
 
-PLAYING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".status" | jq ".playing"`
-RECORDING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".status" | jq ".recording"`
+PLAYING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".playing"`
+RECORDING=`curl -s --data "command=getStatus" http://localhost:3000/audio | jq ".recording"`
 
 
 if [ "${PLAYING}" == true ]; then
