@@ -22,13 +22,6 @@ module.exports.Player = () => {
                 '-r', settings.sampleRate, '-D', settings.defaultCard]
         );
 
-        /*this.arecord.stdout.on('data', (data) =>{
-            for(var i=0;i < data.length; i++){
-                console.log(data[i]);
-            }
-            //console.log(data);
-        });*/
-
         this.arecord.on('close', (code, signal) => {
             console.log(
                 `child process terminated due to receipt of signal ${signal}`);
@@ -51,6 +44,7 @@ module.exports.Player = () => {
         this.arecord.stdout.pipe(this.aplay.stdin);
         this.playing = true;
         broadcastStatus();
+        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
     };
 
     let stop = () => {
@@ -58,37 +52,32 @@ module.exports.Player = () => {
         if (this.recording) {
             stopRecord();
         }
-        /*if (serving) {
-            stopServer();
-        }*/
+        
         this.arecord.stdout.unpipe(this.aplay);
         this.arecord.kill('SIGHUP');
-        //var kill = execStream('killall', ['arecord']);
-        //kill.end();
-        //this.aplay.end();
+        
         this.playing = false;
         broadcastStatus();
+        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
     };
 
     let startRecord = () => {
-        //var recPath = mediaPath.getRecordingPath();
         var args = [path.join(__dirname, '/recordingsWorker.js'), this.recPath, JSON.stringify(settingsController.getAll())];
         this.recordingsWorker = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
         
         this.arecord.stdout.pipe(this.recordingsWorker.stdin);
         this.recording = true;
         broadcastStatus();
+        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
     };
 
 
     let stopRecord = () => {
-        //console.log('stopping recording');
-        //this.arecord.stdout.unpipe(this.fileWriter);
-        //this.fileWriter.end();
         this.arecord.stdout.unpipe(this.recordingsWorker.stdin);
         this.recordingsWorker.send('end');
         this.recording = false;
         broadcastStatus();
+        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
     };
 
     let setRecordingsPath = (path) => {
@@ -97,12 +86,8 @@ module.exports.Player = () => {
     };
 
     global.wss.on('connection', function connection() {
-        //const location = url.parse(req.url, true);
-        //console.log('Connection request from '+req.toString());
-        // You might use location.query.access_token to authenticate or share sessions
-        // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+        
         broadcastStatus();
-        //ws.send(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } ));
     
     });
 

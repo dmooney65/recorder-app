@@ -18,16 +18,12 @@ process.on('message', (msg) => {
 process.on('SIGTERM', function () {
     //console.log('SIGTERM');
     led.unexport();
-    // do whatever to terminate properly
-    // at worst, just 'exit(0)'
     process.exit(0);
 });
 
 process.on('SIGINT', function () {
     //console.log('SIGINT');
     led.unexport();
-    // do whatever to terminate properly
-    // at worst, just 'exit(0)'
     process.exit(0);
 });
 
@@ -119,7 +115,7 @@ var doClickAction = (presses) => {
 };
 
 var doHoldAction = (held) => {
-    console.log('held times ', held);
+    //console.log('held times ', held);
     switch (held) {
     case 5:
         blinkLedRepeat(150, held);
@@ -131,7 +127,7 @@ var doHoldAction = (held) => {
         }, 2000);
         break;
     default:
-        console.log('no action');
+        //console.log('no action');
         break;
     }
 };
