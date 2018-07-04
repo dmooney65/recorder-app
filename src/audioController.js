@@ -9,7 +9,7 @@ const pass = new PassThrough();
 this.recording = false;
 this.playing = false;
 this.recPath = mediaPath.getRecordingPath();
-    
+
 module.exports.Player = () => {
 
     let play = () => {
@@ -50,10 +50,10 @@ module.exports.Player = () => {
         if (this.recording) {
             stopRecord();
         }
-        
+
         this.arecord.stdout.unpipe(this.aplay);
         this.arecord.kill('SIGHUP');
-        
+
         this.playing = false;
         broadcastStatus();
     };
@@ -61,7 +61,7 @@ module.exports.Player = () => {
     let startRecord = () => {
         var args = [path.join(__dirname, '/recordingsWorker.js'), this.recPath, JSON.stringify(settingsController.getAll())];
         this.recordingsWorker = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
-        
+
         this.arecord.stdout.pipe(this.recordingsWorker.stdin);
         this.recording = true;
         broadcastStatus();
@@ -85,16 +85,16 @@ module.exports.Player = () => {
     });
 
     global.wss.on('message', function connection(message) {
-        console.log('message from '+message.toString());
+        console.log('message from ' + message.toString());
         //broadcastStatus();
     });
 
     let broadcastStatus = () => {
-        global.wss.broadcast(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } ));
+        global.wss.broadcast(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath }));
     };
 
     let getStatus = () => {
-        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } );
+        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath });
     };
 
     return {

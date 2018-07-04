@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 var settings = require('../src/settingsController.js')();
 
-/* GET home page. */
 router.get('/', function (req, res) {
     res.render('settings', {});
 });

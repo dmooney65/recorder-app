@@ -32,32 +32,34 @@ module.exports = () => {
     let readSettings = () => {
         settings = fs.readFileAsync(filePath).then((data) => {
             settings = JSON.parse(data);
+            console.log(settings);
             return settings;
         }
         ).catch((error) => {
             console.warn(error);
             var defaultCard = 'plug:default';
             var audioCard = 'default';
-            var native24bit = false;
+            var native24bit = 'false';
             var cmdline = 'ls /sys/bus/platform/drivers | grep "pisound\\|audioinj"';
             require('child_process').exec(cmdline, function (error, stdout, stderr) {
                 if (error) {
                     console.log(stderr);
                 }
                 if (stdout.includes('pisound')) {
+                    console.log('found pisound');
                     defaultCard = 'hw:0,0';
                     audioCard = 'pisound';
-                    native24bit = true;
+                    native24bit = 'true';
                 } else if (stdout.includes('audioinjector')) {
                     defaultCard = 'hw:0,0';
                     audioCard = 'audioinjector';
-                    native24bit = true;
+                    native24bit = 'true';
                 }
-                console.log(stdout);
+                //console.log(stdout);
+                settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': defaultCard, 'highResFormat': 'flac', 'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': audioCard };
+                console.log('settings ', settings);
+                save();
             });
-
-            settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': defaultCard, 'highResFormat': 'flac', 'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': audioCard };
-            return settings;
         });
     };
 
@@ -86,17 +88,21 @@ module.exports = () => {
             settings.inputAs32 = false;
         }
 
-        fs.writeFileAsync(filePath, JSON.stringify(settings)).then(
-            function () {
-                settings = readSettings();
-                //return settings;
-            }
+        fs.writeFileAsync(filePath, JSON.stringify(settings)).then((err) => {
+            if (err) throw err;
+            console.log('The file has been saved!');
+            settings = readSettings();
+            //return settings;
+        }
         );
         return settings;
     };
 
     readSettings();
 
+    //if (settings.audioCard == 'audioinjector') {
+    //    global.buttonLedWorker = fork(__dirname + '/controlScripts/audioinjector/ButtonLedWorker.js', []);
+    //}
     return {
         get: get,
         getAll: getAll,

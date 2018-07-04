@@ -6,11 +6,10 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const { fork } = require('child_process');
 const index = require('./routes/index');
 const settingsRoute = require('./routes/settings');
 const recordingsRoute = require('./routes/recordings');
-const settingsController = require('./src/settingsController.js')();
+//const settingsController = require('./src/settingsController.js')();
 const app = express();
 
 app.set('view engine', 'pug');
@@ -71,12 +70,6 @@ global.wss.broadcast = function broadcast(data) {
     });
 };
 
-settingsController.getAll().then(
-    function (data) {
-        console.log(data.audioCard);
-        if (data.audioCard == 'audioinjector') {
-            global.buttonLedWorker = fork(__dirname + '/controlScripts/audioinjector/ButtonLedWorker.js', []);
-        }
-        settingsController.save();
-    }
-);
+//Uncomment these lines if using a pi with the button overlay functionality
+//const { fork } = require('child_process');
+//global.buttonLedWorker = fork(__dirname + '/controlScripts/audioinjector/ButtonLedWorker.js', []);
