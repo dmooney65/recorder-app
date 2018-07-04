@@ -1,7 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { spawn } = require('child_process');
-
 const filePath = path.join(__dirname, '../settings.json');
 
 var settings;
@@ -38,16 +36,30 @@ module.exports = () => {
         }
         ).catch((error) => {
             console.warn(error);
-            var overlay = spawn(
-                'ls', ['/sys/bus/platform/drivers', '|', 'grep', '"pisound\\|audioinj\\|intel"' ]
-            );
-            console.log(overlay);
-            settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': 'plug:default', 'highResFormat': 'flac', 'native24Bit': false, 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': 'default' };
+            var defaultCard = 'plug:default';
+            var audioCard = 'default';
+            var native24bit = false;
+            var cmdline = 'ls /sys/bus/platform/drivers | grep "pisound\\|audioinj"';
+            require('child_process').exec(cmdline, function (error, stdout, stderr) {
+                if (error) {
+                    console.log(stderr);
+                }
+                if (stdout.includes('pisound')) {
+                    defaultCard = 'hw:0,0';
+                    audioCard = 'pisound';
+                    native24bit = true;
+                } else if (stdout.includes('audioinjector')) {
+                    defaultCard = 'hw:0,0';
+                    audioCard = 'audioinjector';
+                    native24bit = true;
+                }
+                console.log(stdout);
+            });
+
+            settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': defaultCard, 'highResFormat': 'flac', 'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': audioCard };
             return settings;
         });
     };
-
-    readSettings();
 
     let getAll = () => {
         return settings;
@@ -73,25 +85,23 @@ module.exports = () => {
             settings.bitFormat = 'S16_LE';
             settings.inputAs32 = false;
         }
-        if (process.env.AUDIO_CARD) {
-            settings.audioCard = process.env.AUDIO_CARD;
-        } else {
-            settings.audioCard = 'default';
-        }
 
         fs.writeFileAsync(filePath, JSON.stringify(settings)).then(
             function () {
-                readSettings();
+                settings = readSettings();
+                //return settings;
             }
         );
         return settings;
     };
 
+    readSettings();
+
     return {
         get: get,
         getAll: getAll,
         set: set,
-        save: save
+        save: save,
     };
 
 };
