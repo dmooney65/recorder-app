@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const filePath = path.join(__dirname, '../settings.json');
 
@@ -37,7 +38,11 @@ module.exports = () => {
         }
         ).catch((error) => {
             console.warn(error);
-            settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': 'plug:default', 'highResFormat': 'flac', 'native24Bit': 'false', 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': 'default' };
+            var overlay = spawn(
+                'ls', ['/sys/bus/platform/drivers', '|', 'grep', '"pisound\\|audioinj\\|intel"' ]
+            );
+            console.log(overlay);
+            settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': 'plug:default', 'highResFormat': 'flac', 'native24Bit': false, 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': 'default' };
             return settings;
         });
     };

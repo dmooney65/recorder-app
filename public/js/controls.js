@@ -41,13 +41,6 @@ let initControls = (function () {
 
     setupNav(0);
 
-
-    var meter = null;
-    var canvasContext = null;
-    var WIDTH = 300;
-    var HEIGHT = 50;
-    this.rafID;
-
     var doPost = (function (action) {
         $.ajax({
             type: 'POST',
@@ -69,10 +62,6 @@ let initControls = (function () {
     };
 
     
-
-    /*window.setInterval(function () {
-        doPost('getStatus');
-    }, 2000);*/
 
     playPauseBtn.click(function () {
         if (!$(this).find('span').hasClass('glyphicon-stop')) {
@@ -98,7 +87,7 @@ let initControls = (function () {
     });
 
     var controlSocket = new WebSocket(window.location.href.replace('http','ws'));
-    //exampleSocket.onopen(console.log('open'));
+
     controlSocket.onopen = function (event) {
         controlSocket.send('getStatus', event);
     };
@@ -122,38 +111,6 @@ let initControls = (function () {
             clipDetect.removeClass('text-danger');
         }, 500);
     }
-    /*let setupAudioContext = () => {
-        // Create a new <audio> tag.
-        canvasContext = document.getElementById('meter').getContext('2d');
-        context = new (window.AudioContext || window.webkitAudioContext)();
-        var source = context.createMediaElementSource(audio);
-        var analyser = context.createAnalyser();
-        meter = createAudioMeter(context, 0.98, 0.05, 500);
-        source.connect(meter);
-        drawLoop();
-
-        // Connect the audio graph.
-        source.connect(analyser);
-        analyser.connect(context.destination);
-    };*/
-
-    let drawLoop = () => {
-        // clear the background
-        canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
-
-        // check if we're currently clipping
-        if (meter.checkClipping())
-            canvasContext.fillStyle = 'red';
-        else
-            canvasContext.fillStyle = 'green';
-
-        // draw a bar based on the current volume
-        canvasContext.fillRect(0, 0, meter.volume * WIDTH * 1.4, HEIGHT);
-
-        // set up the next visual callback
-        this.rafID = window.requestAnimationFrame(drawLoop);
-    };
-
 
     doPost('getStatus');
 

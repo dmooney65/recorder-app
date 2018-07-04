@@ -1,6 +1,5 @@
 const path = require('path');
 const { spawn } = require('child_process');
-//const audioServer = require('./audio/audioServer.js');
 const settingsController = require('./settingsController.js')();
 const mediaPath = require('./usbController.js');
 const ClipDetect = require('./ClipDetect.js');
@@ -82,23 +81,15 @@ module.exports.Player = () => {
     };
 
     global.wss.on('connection', function connection() {
-        
         broadcastStatus();
-    
     });
 
     global.wss.on('message', function connection(message) {
-        //const location = url.parse(req.url, true);
         console.log('message from '+message.toString());
-        // You might use location.query.access_token to authenticate or share sessions
-        // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
         //broadcastStatus();
-        //wss.send(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } ));
     });
 
     let broadcastStatus = () => {
-        //console.log(this.playing);
-        //console.log(this.recPath);
         global.wss.broadcast(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath } ));
     };
 
