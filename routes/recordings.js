@@ -4,7 +4,7 @@ var files = require('../src/recordingsController');
 var os = require('os');
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
     res.render('recordings', {});
 });
 
@@ -29,17 +29,17 @@ router.post('/', function (req, res) {
 
 });
 
-router.get('/encode', function (req, res, next) {
+router.get('/encode', function (req, res) {
     files.encodeFile(req.query.file);
-    res.redirect(req.get('referer'));
+    res.redirect('/recordings');
 });
 
-router.get('/delete', function (req, res, next) {
+router.get('/delete', function (req, res) {
     files.deleteFile(req.query.file);
-    res.redirect(req.get('referer'));
+    res.redirect('/recordings');
 });
 
-router.get('/download', function (req, res, next) {
+router.get('/download', function (req, res) {
     res.download(req.query.file);
 });
 
