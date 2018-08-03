@@ -36,7 +36,7 @@ module.exports = () => {
         }
         ).catch((error) => {
             console.log(error);
-            var defaultCard = 'plug:default';
+            var defaultCard = 'default';
             var audioCard = 'default';
             var native24bit = 'false';
             var cmdline = 'ls /sys/bus/platform/drivers | grep "pisound\\|audioinj"';

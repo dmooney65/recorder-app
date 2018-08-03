@@ -36,7 +36,7 @@ app.use('/recordings', recordingsRoute);
 
 
 app.use(function (req, res, next) {
-    console.log('404 generated for request',req);
+    console.log('404 generated for request', req);
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -70,6 +70,16 @@ global.wss.broadcast = function broadcast(data) {
         }
     });
 };
+
+global.wss.on('error', (error) => {
+    console.log(`WSS error has occurred: ${JSON.stringify(error)}`);
+});
+
+process.on('SIGINT', function () {
+    console.log("\nGracefully shutting down from SIGINT (Ctrl-C)");
+    // some other closing procedures go here
+    process.exit();
+})
 
 //Uncomment these lines if using a pi with the button overlay functionality
 //const { fork } = require('child_process');

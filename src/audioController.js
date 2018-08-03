@@ -23,7 +23,17 @@ module.exports.Player = () => {
 
         this.arecord.on('close', (code, signal) => {
             console.log(
-                `child process terminated due to receipt of signal ${signal}`);
+                `record process terminated due to receipt of signal ${signal}`);
+        });
+
+        this.arecord.on('error', (code, signal) => {
+            console.log(
+                `record error thrown ${signal}`);
+        });
+
+        this.arecord.on('exit', (code, signal) => {
+            console.log(
+                `record exit thrown ${signal}`);
         });
 
         this.transform = ClipDetect({ inputBitDepth: settings.bitFormat.replace(/\D/g, '') });
@@ -40,6 +50,22 @@ module.exports.Player = () => {
 
         this.aplay = spawn('aplay', ['-D', 'default']);
 
+        this.aplay.on('close', (code, signal) => {
+            console.log(
+                `play  process terminated due to receipt of signal ${signal}`);
+        });
+
+        this.aplay.on('error', (code, signal) => {
+            console.log(
+                `play error thrown ${signal}`);
+        });
+
+        this.aplay.on('exit', (code, signal) => {
+            console.log(
+                `play exit thrown ${signal}`);
+        });
+        
+        
         this.arecord.stdout.pipe(this.aplay.stdin);
         this.playing = true;
         broadcastStatus();
@@ -88,7 +114,7 @@ module.exports.Player = () => {
         console.log('message from ' + message.toString());
         //broadcastStatus();
     });
-
+    
     let broadcastStatus = () => {
         global.wss.broadcast(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath }));
     };
