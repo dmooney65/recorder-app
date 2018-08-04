@@ -6,9 +6,9 @@ const ClipDetect = require('./ClipDetect.js');
 const { PassThrough } = require('stream');
 const pass = new PassThrough();
 
-this.recording = false;
-this.playing = false;
-this.recPath = mediaPath.getRecordingPath();
+let recording = false;
+let playing = false;
+let recPath = mediaPath.getRecordingPath();
 
 module.exports.Player = () => {
 
@@ -67,29 +67,29 @@ module.exports.Player = () => {
 
 
         this.arecord.stdout.pipe(this.aplay.stdin);
-        this.playing = true;
+        playing = true;
         broadcastStatus();
     };
 
     let stop = () => {
         //this.arecord.pause();
-        if (this.recording) {
+        if (recording) {
             stopRecord();
         }
 
         this.arecord.stdout.unpipe(this.aplay);
         this.arecord.kill('SIGHUP');
 
-        this.playing = false;
+        playing = false;
         broadcastStatus();
     };
 
     let startRecord = () => {
-        var args = [path.join(__dirname, '/recordingsWorker.js'), this.recPath, JSON.stringify(settingsController.getAll())];
+        var args = [path.join(__dirname, '/recordingsWorker.js'), recPath, JSON.stringify(settingsController.getAll())];
         this.recordingsWorker = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
 
         this.arecord.stdout.pipe(this.recordingsWorker.stdin);
-        this.recording = true;
+        recording = true;
         broadcastStatus();
     };
 
@@ -97,28 +97,27 @@ module.exports.Player = () => {
     let stopRecord = () => {
         this.arecord.stdout.unpipe(this.recordingsWorker.stdin);
         this.recordingsWorker.send('end');
-        this.recording = false;
+        recording = false;
         broadcastStatus();
     };
 
     let setRecordingsPath = (path) => {
-        this.recPath = path;
+        recPath = path;
         broadcastStatus();
     };
 
     global.wss.on('connection', function connection(client) {
         //console.log('connection');
-        //broadcastStatus();
         client.on('message', function incoming(msg) {
-            if(msg == 'play'){
+            if (msg == 'play') {
                 play();
-            } else if (msg == 'stop'){
+            } else if (msg == 'stop') {
                 stop();
-            } else if (msg == 'startRecord' && !this.recording){
+            } else if (msg == 'startRecord' && !recording) {
                 startRecord();
-            } else if (msg == 'stopRecord' && this.recording){
+            } else if (msg == 'stopRecord' && recording) {
                 stopRecord();
-            } else if (msg == 'getStatus'){
+            } else if (msg == 'getStatus') {
                 broadcastStatus();
             }
             //console.log('message',msg);
@@ -134,7 +133,7 @@ module.exports.Player = () => {
     };
 
     let getStatus = () => {
-        return JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath });
+        return JSON.stringify({ 'playing': playing, 'recording': recording, 'recordingsPath': recPath });
     };
 
     return {
