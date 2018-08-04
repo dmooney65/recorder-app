@@ -58,6 +58,8 @@ server.listen(3000, function listening() {
     console.log('Listening on %d', server.address().port, ' host', server.address().address);
 });
 
+server.on('error', () => console.log('server errored'));
+
 //Most wss functions are in audioController.js 
 global.wss = new WebSocket.Server({ server });
 
@@ -71,15 +73,17 @@ global.wss.broadcast = function broadcast(data) {
     });
 };
 
-global.wss.on('error', (error) => {
-    console.log(`WSS error has occurred: ${JSON.stringify(error)}`);
-});
+global.wss.on('error', () => console.log('wss errored'));
 
 process.on('SIGINT', function () {
-    console.log("\nGracefully shutting down from SIGINT (Ctrl-C)");
+    console.log('\nGracefully shutting down from SIGINT (Ctrl-C)');
     // some other closing procedures go here
     process.exit();
-})
+});
+
+process.on('unhandledRejection', (err) => {
+    console.error(err);
+});
 
 //Uncomment these lines if using a pi with the button overlay functionality
 //const { fork } = require('child_process');

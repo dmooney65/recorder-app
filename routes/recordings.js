@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var files = require('../src/recordingsController');
 var os = require('os');
+var spawn = require('child_process').spawnSync;
+
 
 /* GET home page. */
 router.get('/', function (req, res) {
@@ -17,11 +19,24 @@ router.post('/', function (req, res) {
     } else {
         var resp = files.readFiles(os.homedir() + '/Music/');
         if (req.body.path == 'usb') {
-            resp = files.readFiles('/media/');
+            var ls = spawn('ls', ['/media/']);
+            var lines = ls.stdout.toString().split('\n');
+            var retVal;
+            lines.forEach(line => {
+                try{
+                    retVal = files.readFiles('/media/' + line.toString() + '/');
+                } catch(e){
+                    //Errors here are permission related so ignore
+                }
+            });
+            resp = retVal;
+
         }
+
         resp.then(function (result) {
             res.send(result);
         });
+
         resp.catch(function () {
             console.log('Promise Rejected');
         });

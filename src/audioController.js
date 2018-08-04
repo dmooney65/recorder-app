@@ -64,8 +64,8 @@ module.exports.Player = () => {
             console.log(
                 `play exit thrown ${signal}`);
         });
-        
-        
+
+
         this.arecord.stdout.pipe(this.aplay.stdin);
         this.playing = true;
         broadcastStatus();
@@ -106,17 +106,31 @@ module.exports.Player = () => {
         broadcastStatus();
     };
 
-    global.wss.on('connection', function connection() {
-        broadcastStatus();
+    global.wss.on('connection', function connection(client) {
+        //console.log('connection');
+        //broadcastStatus();
+        client.on('message', function incoming(msg) {
+            if(msg == 'play'){
+                play();
+            } else if (msg == 'stop'){
+                stop();
+            } else if (msg == 'startRecord' && !this.recording){
+                startRecord();
+            } else if (msg == 'stopRecord' && this.recording){
+                stopRecord();
+            } else if (msg == 'getStatus'){
+                broadcastStatus();
+            }
+            //console.log('message',msg);
+        });
+        client.on('error', () => {
+            console.log('client error');
+        });
     });
 
-    global.wss.on('message', function connection(message) {
-        console.log('message from ' + message.toString());
-        //broadcastStatus();
-    });
-    
     let broadcastStatus = () => {
-        global.wss.broadcast(JSON.stringify({ 'playing': this.playing, 'recording': this.recording, 'recordingsPath': this.recPath }));
+        //console.log('broadcasting');
+        global.wss.broadcast(getStatus());
     };
 
     let getStatus = () => {

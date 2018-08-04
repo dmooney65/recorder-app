@@ -2,7 +2,7 @@
 let playPauseBtn;
 let recordingBtn;
 let clipDetect;
-
+let isPlaying;
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 let setPlaying = (playing) => {
+    isPlaying = playing;
     if (!playing) {
         playPauseBtn.find('span').removeClass('glyphicon-stop').addClass('glyphicon-play');
         clipDetect.removeClass('text-success');
@@ -41,51 +42,6 @@ let initControls = (function () {
 
     setupNav(0);
 
-    var doPost = (function (action) {
-        $.ajax({
-            type: 'POST',
-            data: { 'command': action },
-            url: '/audio',
-            /*success: function (data) {
-                setStatus(data);
-            },*/
-            error: function (err) {
-                throw err;
-            }
-        });
-    });
-    
-    let setStatus = (data) => {
-        setPlaying(data.playing);
-        setRecording(data.recording);
-        setPath(data.recordingsPath);
-    };
-
-    
-
-    playPauseBtn.click(function () {
-        if (!$(this).find('span').hasClass('glyphicon-stop')) {
-            doPost('play');
-            setPlaying(true);
-            //disableSecondary(true);
-        } else {
-            doPost('stop');
-            setPlaying(false);
-            //disableSecondary(false);
-        }
-    });
-
-    recordingBtn.click(function () {
-        var span = $(this).find('span');
-        if (!span.hasClass('text-success')) {
-            doPost('startRecord');
-            setRecording(true);
-        } else {
-            doPost('stopRecord');
-            setRecording(false);
-        }
-    });
-
     var controlSocket = new WebSocket(window.location.href.replace('http','ws'));
 
     controlSocket.onopen = function (event) {
@@ -95,24 +51,62 @@ let initControls = (function () {
     var redTime = animate();
 
     controlSocket.onmessage = function (event) {
-        var data = JSON.parse(event.data);
-        //console.log(data.toString());
-        if(data.hasOwnProperty('clipping')){
+        var status = JSON.parse(event.data);
+        if(status.hasOwnProperty('clipping')){
             clipDetect.addClass('text-danger');
             clearInterval(redTime);
             redTime = animate();
-        } else if(data.hasOwnProperty('playing')){
-            setStatus(data);
+        } 
+        if(status.hasOwnProperty('playing')){
+            setStatus(status);
         }
     };
+
+    /*var doPost = (function (action) {
+        $.ajax({
+            type: 'POST',
+            data: { 'command': action },
+            url: '/audio',
+            //success: function (data) {
+            //    setStatus(data);
+            //},
+            error: function (err) {
+                throw err;
+            }
+        });
+    });*/
+    
+    let setStatus = (data) => {
+        setPlaying(data.playing);
+        setRecording(data.recording);
+        setPath(data.recordingsPath);
+    };
+
+    
+    playPauseBtn.click(function () {
+        if (!$(this).find('span').hasClass('glyphicon-stop')) {
+            controlSocket.send('play');
+        } else {
+            controlSocket.send('stop');
+        }
+    });
+
+    recordingBtn.click(function () {
+        var span = $(this).find('span');
+        if (!span.hasClass('text-success') && isPlaying) {
+            controlSocket.send('startRecord');
+        } else {
+            controlSocket.send('stopRecord');
+        }
+    });
+
+    window.addEventListener('beforeunload', function () { controlSocket.close(); });
 
     function animate() {
         return setInterval(function() {
             clipDetect.removeClass('text-danger');
         }, 500);
     }
-
-    doPost('getStatus');
 
 });
 

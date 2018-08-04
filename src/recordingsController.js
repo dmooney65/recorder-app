@@ -4,7 +4,7 @@ const { spawn } = require('child_process');
 const settings = require('./settingsController.js')();
 
 module.exports.readFiles = (dir) => {
-
+    
     return mediaInfo({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.wav', '**/*.mp3').then(function (data) {
         var ret = [];
         for (var i in data) {
@@ -27,14 +27,15 @@ module.exports.readFiles = (dir) => {
                         + data[i].audio[0].sampling_rate[0] / 1000;
                 }
             } catch (e) {
-                console.log(e);
+                //swallow minor errors at the file level
+                //console.log(e);
             }
 
             ret.push(item);
 
         }
         return (ret);
-    }).catch(function (e) { console.log(e); });
+    });//.catch(function (e) { console.log('next error ',e); });
 };
 
 
@@ -65,7 +66,7 @@ module.exports.encodeFile = (file) => {
     }
 
     transcode.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
+        console.log(`transcode child process exited with code ${code}`);
     });
 
 };
