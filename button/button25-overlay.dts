@@ -16,6 +16,16 @@
     };
 
     fragment@1 {
+        target = <&leds>;
+        __overlay__ {
+            clip_led: clip_led {
+                gpios = <&gpio 24 0>;
+                linux,default-trigger = "default-off";
+            };
+        };
+    };
+
+    fragment@2 {
     target-path = "/soc";
         __overlay__ {
             button25: button25 {
@@ -25,7 +35,7 @@
                 pinctrl-names = "default";
                 pinctrl-0 = <&button25_pin>;
                 status = "okay";
-		autorepeat;
+		        autorepeat;
 
                 button@25 {
                     label = "button gpio25";

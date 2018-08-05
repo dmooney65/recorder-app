@@ -36,8 +36,9 @@ module.exports = () => {
         }
         ).catch((error) => {
             console.log(error);
-            var defaultCard = 'default';
-            var audioCard = 'default';
+            var captureDevice = 'default';
+            var playbackDevice = 'default';
+            var audioCard = 'generic';
             var native24bit = 'false';
             var cmdline = 'ls /sys/bus/platform/drivers | grep "pisound\\|audioinj"';
             require('child_process').exec(cmdline, function (error, stdout, stderr) {
@@ -45,16 +46,21 @@ module.exports = () => {
                     console.log(stderr);
                 }
                 if (stdout.includes('pisound')) {
-                    defaultCard = 'hw:0,0';
                     audioCard = 'pisound';
+                    captureDevice = 'hw:0,0';
+                    playbackDevice = 'hw:0,0';
                     native24bit = 'true';
                 } else if (stdout.includes('audioinjector')) {
-                    defaultCard = 'hw:0,0';
                     audioCard = 'audioinjector';
+                    captureDevice = 'hw:0,0';
+                    playbackDevice = 'hw:0,0';
                     native24bit = 'true';
                 }
                 //console.log(stdout);
-                settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 'mp3Rate': '3', 'defaultCard': defaultCard, 'highResFormat': 'flac', 'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false, 'audioCard': audioCard };
+                settings = { 'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5', 
+                    'mp3Rate': '3', 'captureDevice': captureDevice, 'highResFormat': 'flac', 
+                    'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false, 
+                    'playbackDevice': playbackDevice, 'audioCard': audioCard };
                 save();
             });
         });

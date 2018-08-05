@@ -32,11 +32,10 @@ block content
                             option(value="flac") 16/24bit FLAC
                             option(value="wav") 16/32bit WAV
                     div.form-group
-                        label.control-label(for="defaultCard") Recording card
-                        select.form-control(id="defaultCard")
-                            option(value="hw:0,0") Hardware device
-                            option(value="default") Plug device 
-                            option(value="plug:softvol") Softvol device (requires custom config)
+                        label(for='captureDevice') Capture Device (e.g. hw:0,0 or default):
+                        input#captureDevice.form-control(type='text')
+                        label(for='playbackDevice') Playback Device (e.g. hw:0,0 or default):
+                        input#playbackDevice.form-control(type='text')
                         div.checkbox
                             label
                                 input(type="checkbox" id="native24Bit") 

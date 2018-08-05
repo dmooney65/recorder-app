@@ -13,7 +13,8 @@ router.post('/', function (req, res) {
         settings.set('sampleRate', req.body.sampleRate);
         settings.set('compressionLevel', req.body.compressionLevel);
         settings.set('mp3Rate', req.body.mp3Rate);
-        settings.set('defaultCard', req.body.defaultCard);
+        settings.set('captureDevice', req.body.captureDevice);
+        settings.set('playbackDevice', req.body.playbackDevice);
         settings.set('highResFormat', req.body.highResFormat);
         settings.set('native24Bit', req.body.native24Bit);
         res.send(settings.save());

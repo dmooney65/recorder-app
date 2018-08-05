@@ -4,7 +4,7 @@ const settingsController = require('./settingsController.js')();
 const mediaPath = require('./usbController.js');
 const ClipDetect = require('./ClipDetect.js');
 const { PassThrough } = require('stream');
-const pass = new PassThrough();
+const passThrough = new PassThrough();
 
 let recording = false;
 let playing = false;
@@ -15,29 +15,37 @@ module.exports.Player = () => {
     let play = () => {
         let settings = settingsController.getAll();
         console.log('arecord ', '-f', settings.bitFormat, '-c', 2,
-            '-r', settings.sampleRate, '-D', settings.defaultCard);
+            '-r', settings.sampleRate, '-D', settings.captureDevice);
         this.arecord = spawn(
             'arecord', ['-f', settings.bitFormat, '-c', 2,
-                '-r', settings.sampleRate, '-D', settings.defaultCard]
+                '-r', settings.sampleRate, '-D', settings.captureDevice]
         );
 
         this.arecord.on('close', (code, signal) => {
             console.log(
-                `record process terminated due to receipt of signal ${signal}`);
+                `record process closed due to receipt of signal ${signal}`);
+            if (code == 1) {
+                console.log(`record process closed with error code ${code}`);
+                playing = false;
+                broadcastStatus();
+            }
         });
 
-        this.arecord.on('error', (code, signal) => {
-            console.log(
-                `record error thrown ${signal}`);
+        this.arecord.on('error', (err) => {
+            console.log('record failed to start ',err);
         });
 
-        this.arecord.on('exit', (code, signal) => {
+        /*this.arecord.on('exit', (code, signal) => {
             console.log(
                 `record exit thrown ${signal}`);
-        });
+            if (code == 0) {
+                console.log(`record exited with code ${code}`);
+            }
+            //broadcastStatus();
+        });*/
 
         this.transform = ClipDetect({ inputBitDepth: settings.bitFormat.replace(/\D/g, '') });
-        pass.on('data', (chunk) => {
+        passThrough.on('data', (chunk) => {
             if (chunk.toString() == 'true') {
                 global.wss.broadcast(JSON.stringify({ clipping: true }));
                 if (settings.audioCard == 'audioinjector') {
@@ -45,26 +53,16 @@ module.exports.Player = () => {
                 }
             }
         });
-        this.arecord.stdout.pipe(this.transform, { end: false }).pipe(pass, { end: false });
+        this.arecord.stdout.pipe(this.transform, { end: false }).pipe(passThrough, { end: false });
 
 
-        this.aplay = spawn('aplay', ['-D', 'default']);
+        console.log('aplay ', '-D', settings.playbackDevice);
+        this.aplay = spawn('aplay', ['--disable-resample','-D', settings.playbackDevice]);
 
         this.aplay.on('close', (code, signal) => {
             console.log(
-                `play  process terminated due to receipt of signal ${signal}`);
+                `play  process terminated due to receipt of signal ${signal} code ${code}`);
         });
-
-        this.aplay.on('error', (code, signal) => {
-            console.log(
-                `play error thrown ${signal}`);
-        });
-
-        this.aplay.on('exit', (code, signal) => {
-            console.log(
-                `play exit thrown ${signal}`);
-        });
-
 
         this.arecord.stdout.pipe(this.aplay.stdin);
         playing = true;
