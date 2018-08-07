@@ -1,5 +1,6 @@
 html, body {
     height: 100%;
+    /*min-width: 480px;*/
 }
 .container-canvas {
     /* This could be done in one single declaration. See the extended sample. */
@@ -30,3 +31,40 @@ audio {
     height: 20px;
     line-height: 20px;
 }
+
+.nav.nav-sm > li > a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+
+}
+
+@media screen and (min-width: 320px) {
+    .nav-pills{
+        display: flex;
+    }
+    .nav-pills li {
+        display: flex;
+        flex: 1;
+    }
+    
+    .nav-pills li  a {
+        flex: 1;
+    }
+    }
+
+/*@media (min-width: 768px){
+    .nav-pills{
+       margin: 0 auto;
+       display: table;
+       table-layout: fixed;
+       float: none;
+    }
+  }*/  
+/*.nav-pills-sm>li {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}*/

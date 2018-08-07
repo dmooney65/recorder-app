@@ -21,7 +21,7 @@ router.get('/', function (req, res) {
         });
 
         usbResp.then(function (usbResults) {
-            res.render('recordings', {'localResults': localResults, 'usbResults': usbResults});
+            res.render('recordings', { 'localResults': localResults, 'usbResults': usbResults });
         });
         usbResp.catch(function () {
             console.log('Promise Rejected');
@@ -44,6 +44,23 @@ router.get('/delete', function (req, res) {
 });
 
 router.get('/download', function (req, res) {
+    var file = req.query.file;
+    switch (true) {
+    case (file.indexOf('flac') >= 0):
+        res.setHeader('Content-Type', 'audio/flac');
+        break;
+    case (file.indexOf('wav') >= 0):
+        res.setHeader('Content-Type', 'audio/wav');
+        break;
+    case (file.indexOf('mp3') >= 0):
+        res.setHeader('Content-Type', 'audio/mp3');
+        break;
+    }
+    /*if (file.indexOf('flac') >= 0) {
+        console.log('FLAC file');
+    }*/
+    console.log(res.getHeaders());
+    //res.setHeader('Content-Type', 'audio/flac');
     res.download(req.query.file);
 });
 

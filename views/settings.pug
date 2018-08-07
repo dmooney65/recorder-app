@@ -8,7 +8,7 @@ block content
     div.container
         div.page-header Manage Settings
 
-        div.col-xs-8.col-sm-6
+        div.col-xs-8.col-sm-10
             form.form-horizontal
                 fieldset
                     div.form-group
@@ -33,15 +33,22 @@ block content
                             option(value="wav") 16/32bit WAV
                     div.form-group
                         label(for='captureDevice') Capture Device (e.g. hw:0,0 or default):
-                        input#captureDevice.form-control(type='text')
+                        input#captureDevice.form-control(type='text' value=settings.captureDevice)
                         label(for='playbackDevice') Playback Device (e.g. hw:0,0 or default):
-                        input#playbackDevice.form-control(type='text')
+                        input#playbackDevice.form-control(type='text' value=settings.playbackDevice)
                         div.checkbox
                             label
                                 input(type="checkbox" id="native24Bit") 
-                                span 24bit Hardware Support      
+                                span 24bit Hardware Support     
                 fieldset
                     div.form-group
-                        button.btn.btn-primary(type="button" id="save") Save
+                        button.btn.btn-primary(type="submit" id="save") Save
 
             ul.list-group(id ="log")
+    script.
+        document.getElementById('sampleRate').value=#{settings.bitDepth}+'/'+#{settings.sampleRate};
+        document.getElementById('mp3Rate').value=#{settings.mp3Rate};
+        document.getElementById('highResFormat').value="#{settings.highResFormat}";
+        document.getElementById('native24Bit').checked=#{settings.native24Bit};
+
+        

@@ -5,26 +5,17 @@ let playbackDevice;
 let highResFormat;
 let native24Bit;
 
-document.addEventListener('DOMContentLoaded', function () {
 
+document.addEventListener('DOMContentLoaded', function () {
     sampleRate = $('#sampleRate');
     mp3Rate = $('#mp3Rate');
     captureDevice = $('#captureDevice');
     playbackDevice = $('#playbackDevice');
     highResFormat = $('#highResFormat');
     native24Bit = $('#native24Bit');
+
     initSettings();
-
 });
-
-let createMessage = (msg) => {
-    var newMessage = document.createElement('li');
-    newMessage.setAttribute('class','list-group-item');
-    var textNode = document.createTextNode(msg);
-    newMessage.appendChild(textNode);
-    var list = document.getElementById('log');
-    list.insertBefore(newMessage, list.childNodes[0]);
-};
 
 let initSettings = (function () {
     setupNav(1);
@@ -41,7 +32,7 @@ let initSettings = (function () {
                 playbackDevice.val(data.playbackDevice);
                 highResFormat.val(data.highResFormat);
                 native24Bit.prop('checked', data.native24Bit == 'true');
-                if(data.audioCard == 'audioinjector'){
+                if (data.audioCard == 'audioinjector') {
                     sampleRate.find('option')[4].hidden = true;
                 }
             },
@@ -51,18 +42,15 @@ let initSettings = (function () {
         });
     });
 
-    doPost({ 'command': 'get' });
-
-    $('#save').click(function (e) {
-        e.preventDefault();
+    $('#save').click(function () {
+        //e.preventDefault();
         var sampling = sampleRate.val().split('/');
         var action = {
             'command': 'set', 'bitDepth': sampling[0], 'sampleRate': sampling[1],
             'compressionLevel': 5, 'mp3Rate': mp3Rate.val(), 'captureDevice': captureDevice.val(),
-            'playbackDevice': playbackDevice.val(),'highResFormat': highResFormat.val(), 'native24Bit': native24Bit.prop('checked')
+            'playbackDevice': playbackDevice.val(), 'highResFormat': highResFormat.val(), 'native24Bit': native24Bit.prop('checked')
         };
         doPost(action);
-        createMessage('Settings Saved');
     });
 
 });

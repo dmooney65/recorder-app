@@ -5,15 +5,15 @@ block content
 
     append head
         script(src='/js/recordings.js')
-        - var values = [];
+        //-- var values = [];
         
     div.container
         div.page-header Manage Recordings
 
     div.container        
         div.row
-            div.col-xs-auto.col-sm-8
-                table.table.table-condensed.table-responsive.table-striped.table-hover(id="intlist") Internal storage
+            div.container
+                table.table.table-condensed.table-striped.table-hover(id="intlist") Internal storage
                     thead
                         tr
                             th(scope="row") Actions
@@ -25,21 +25,22 @@ block content
                     for result in localResults
                         tr
                             td
-                                div(class="btn-group btn-group-sm" role="group")
-                                    button(class='btn btn-default')
-                                        a(href='/recordings/download?file='+result.path+result.file)
-                                            span(class='glyphicon glyphicon-download-alt')
-                                    button(class='btn btn-default')
-                                        a(href='/recordings/delete?file='+result.path+result.file onclick="return confirm(\'Are you sure you want to delete this item?\');")
-                                            span(class='glyphicon glyphicon-trash')
-                                    button(class='btn btn-default')
+                                ul.nav.nav-sm.nav-pills
+                                    li
+                                        a(href='/recordings/download?file='+result.path+result.file download)
+                                            span.glyphicon.glyphicon-download-alt
+                                    li
+                                        a(href='/recordings/delete?file='+result.path+result.file
+                                                onclick="return confirm(\'Are you sure you want to delete this item?\');")
+                                            span.glyphicon.glyphicon-trash
+                                    li
                                         a(href='/recordings/encode?file='+result.path+result.file)
-                                            span(class='glyphicon glyphicon-export')
+                                            span.glyphicon.glyphicon-export
                             td= result.file
                             td= result.duration
                             td= result.fileSize
                             td= result.bitRate
-                table.table.table-condensed.table-responsive.table-striped.table-hover(id="usblist") USB storage
+                table.table.table-condensed.table-striped.table-hover(id="usblist") USB storage
                     thead
                         tr
                             th(scope="row") Actions                                
@@ -51,16 +52,17 @@ block content
                     for result in usbResults
                         tr
                             td
-                                div(class="btn-group btn-group-sm" role="group")
-                                    button(class='btn btn-default')
-                                        a(href='/recordings/download?file='+result.path+result.file)
-                                            span(class='glyphicon glyphicon-download-alt')
-                                    button(class='btn btn-default')
-                                        a(href='/recordings/delete?file='+result.path+result.file onclick="return confirm(\'Are you sure you want to delete this item?\');")
-                                            span(class='glyphicon glyphicon-trash')
-                                    button(class='btn btn-default')
+                                ul.nav.nav-sm.nav-pills
+                                    li
+                                        a(href='/recordings/download?file='+result.path+result.file download)
+                                            span.glyphicon.glyphicon-download-alt
+                                    li
+                                        a(href='/recordings/delete?file='+result.path+result.file
+                                                onclick="return confirm(\'Are you sure you want to delete this item?\');")
+                                            span.glyphicon.glyphicon-trash
+                                    li
                                         a(href='/recordings/encode?file='+result.path+result.file)
-                                            span(class='glyphicon glyphicon-export')
+                                            span.glyphicon.glyphicon-export
                             td= result.file
                             td= result.duration
                             td= result.fileSize

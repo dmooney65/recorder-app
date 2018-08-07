@@ -102,9 +102,6 @@ module.exports = () => {
 
     readSettings();
 
-    //if (settings.audioCard == 'audioinjector') {
-    //    global.buttonLedWorker = fork(__dirname + '/controlScripts/audioinjector/ButtonLedWorker.js', []);
-    //}
     return {
         get: get,
         getAll: getAll,

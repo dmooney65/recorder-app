@@ -1,27 +1,27 @@
 const express = require('express');
 const router = express.Router();
-var settings = require('../src/settingsController.js')();
+const settingsController = require('../src/settingsController.js')();
 
 router.get('/', function (req, res) {
-    res.render('settings', {});
+    res.render('settings', {'settings': settingsController.getAll()});
 });
 
-router.post('/', function (req, res) {
+router.post('/', function (req) {
 
     if (req.body.command == 'set') {
-        settings.set('bitDepth', req.body.bitDepth);
-        settings.set('sampleRate', req.body.sampleRate);
-        settings.set('compressionLevel', req.body.compressionLevel);
-        settings.set('mp3Rate', req.body.mp3Rate);
-        settings.set('captureDevice', req.body.captureDevice);
-        settings.set('playbackDevice', req.body.playbackDevice);
-        settings.set('highResFormat', req.body.highResFormat);
-        settings.set('native24Bit', req.body.native24Bit);
-        res.send(settings.save());
-    } else {
-        res.send(settings.getAll());
-    }
 
+        settingsController.set('bitDepth', req.body.bitDepth);
+        settingsController.set('sampleRate', req.body.sampleRate);
+        settingsController.set('compressionLevel', req.body.compressionLevel);
+        settingsController.set('mp3Rate', req.body.mp3Rate);
+        settingsController.set('captureDevice', req.body.captureDevice);
+        settingsController.set('playbackDevice', req.body.playbackDevice);
+        settingsController.set('highResFormat', req.body.highResFormat);
+        settingsController.set('native24Bit', req.body.native24Bit);
+        settingsController.save();
+    } else {
+        //res.send(settingsController.getAll());
+    }
 });
 
 module.exports = router;
