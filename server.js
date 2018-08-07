@@ -5,12 +5,11 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const index = require('./routes/index');
-const settingsRoute = require('./routes/settings');
-const recordingsRoute = require('./routes/recordings');
-//const settingsController = require('./src/settingsController.js')();
+const index = require('./routes/indexRouter');
+const settingsRoute = require('./routes/settingsRouter');
+const recordingsRoute = require('./routes/recordingsRouter');
 const app = express();
-const wssServer = require('./wssServer.js'); 
+const wssServer = require('./wssServer.js');
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -21,9 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-//const os = require('os');
-//app.locals.hostname = os.hostname();
-//Serving the files on the public folder
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/bootstrap')));
 app.use('/css', express.static(path.join(__dirname, '/stylesheets')));
@@ -34,23 +31,16 @@ app.use('/', index);
 app.use('/settings', settingsRoute);
 app.use('/recordings', recordingsRoute);
 
-
-app.use(function (req, res, next) {
-    console.log('404 generated for request', req);
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+// Handle 404
+app.use(function (req, res) {
+    res.status(404);
+    res.render('404', {title: '404: File Not Found'});
 });
 
-// error handler
-app.use(function (err, req, res) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-    // render the error page
-    res.status(err.status || 500);
-    res.render('error');
+// Handle 500
+app.use(function (error, req, res) {
+    res.status(500);
+    res.render('500.jade', {title:'500: Internal Server Error', error: error});
 });
 
 const server = http.createServer(app);
