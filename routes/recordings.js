@@ -5,43 +5,32 @@ var os = require('os');
 var spawn = require('child_process').spawnSync;
 
 
-/* GET home page. */
 router.get('/', function (req, res) {
-    res.render('recordings', {});
-});
+    var localResp = files.readFiles(os.homedir() + '/Music/');
 
-router.post('/', function (req, res) {
-    if (req.body.command == 'set') {
-        //settings.set('bitDepth', req.body.bitDepth);
-        //settings.set('sampleRate', req.body.sampleRate);
-        //settings.set('compressionLevel', req.body.compressionLevel);
-        //res.send(settings.save());
-    } else {
-        var resp = files.readFiles(os.homedir() + '/Music/');
-        if (req.body.path == 'usb') {
-            var ls = spawn('ls', ['/media/']);
-            var lines = ls.stdout.toString().split('\n');
-            var retVal;
-            lines.forEach(line => {
-                try{
-                    retVal = files.readFiles('/media/' + line.toString() + '/');
-                } catch(e){
-                    //Errors here are permission related so ignore
-                }
-            });
-            resp = retVal;
-
-        }
-
-        resp.then(function (result) {
-            res.send(result);
+    localResp.then(function (localResults) {
+        var ls = spawn('ls', ['/media/']);
+        var lines = ls.stdout.toString().split('\n');
+        var usbResp;
+        lines.forEach(line => {
+            try {
+                usbResp = files.readFiles('/media/' + line.toString() + '/');
+            } catch (e) {
+                //Errors here are probably permission related so ignore
+            }
         });
 
-        resp.catch(function () {
+        usbResp.then(function (usbResults) {
+            res.render('recordings', {'localResults': localResults, 'usbResults': usbResults});
+        });
+        usbResp.catch(function () {
             console.log('Promise Rejected');
         });
-    }
+    });
 
+    localResp.catch(function () {
+        console.log('Promise Rejected');
+    });
 });
 
 router.get('/encode', function (req, res) {

@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 let initNav = () => {
 
-    $(navs[0]).click(function () {
+    /*$(navs[0]).click(function () {
         if (window.location.pathname != '/') {
             window.location.href = '/';
         }
@@ -24,7 +24,7 @@ let initNav = () => {
         if (!$(this).hasClass('disabled')) {
             window.location.href = '/recordings';
         }
-    });
+    });*/
 
 
 };
@@ -33,9 +33,9 @@ let setupNav = (index) => { // eslint-disable-line no-unused-vars
     $(navs).removeClass('active');
     var nav = $($(navs)[index]);
     nav.addClass('active');
-    nav.click(function (e) {
+    /*nav.click(function (e) {
         e.preventDefault();
-    });
+    });*/
 
 };
 
