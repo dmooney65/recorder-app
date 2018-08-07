@@ -5,7 +5,7 @@ const mediaPath = require('./usbController.js');
 const ClipDetect = require('./ClipDetect.js');
 const { PassThrough } = require('stream');
 const passThrough = new PassThrough();
-
+const wssServer = require('../wssServer.js');
 let recording = false;
 let playing = false;
 let recPath = mediaPath.getRecordingPath();
@@ -47,7 +47,7 @@ module.exports.Player = () => {
         this.transform = ClipDetect({ inputBitDepth: settings.bitFormat.replace(/\D/g, '') });
         passThrough.on('data', (chunk) => {
             if (chunk.toString() == 'true') {
-                global.wss.broadcast(JSON.stringify({ clipping: true }));
+                wss.broadcast(JSON.stringify({ clipping: true }));
                 if (settings.audioCard == 'audioinjector') {
                     global.buttonLedWorker.send({ command: 'blinkLed', arg: 500 });
                 }
@@ -104,7 +104,8 @@ module.exports.Player = () => {
         broadcastStatus();
     };
 
-    global.wss.on('connection', function connection(client) {
+    let wss = wssServer.WebsocketServer().get();
+    wss.on('connection', function connection(client) {
         //console.log('connection');
         client.on('message', function incoming(msg) {
             if (msg == 'play') {
@@ -127,7 +128,7 @@ module.exports.Player = () => {
 
     let broadcastStatus = () => {
         //console.log('broadcasting');
-        global.wss.broadcast(getStatus());
+        wss.broadcast(getStatus());
     };
 
     let getStatus = () => {

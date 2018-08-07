@@ -1,7 +1,6 @@
 const path = require('path');
 const express = require('express');
 const http = require('http');
-const WebSocket = require('ws');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
@@ -11,6 +10,7 @@ const settingsRoute = require('./routes/settings');
 const recordingsRoute = require('./routes/recordings');
 //const settingsController = require('./src/settingsController.js')();
 const app = express();
+const wssServer = require('./wssServer.js'); 
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -59,21 +59,8 @@ server.listen(3000, function listening() {
 });
 
 server.on('error', () => console.log('server errored'));
-
-//Most wss functions are in audioController.js 
-global.wss = new WebSocket.Server({ server });
-
-
-global.wss.broadcast = function broadcast(data) {
-    global.wss.clients.forEach(function each(client) {
-        //console.log('broadcasting' + data);
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(data);
-        }
-    });
-};
-
-global.wss.on('error', () => console.log('wss errored'));
+var wss = wssServer.WebsocketServer();
+wss.createServer(server);
 
 process.on('SIGINT', function () {
     console.log('\nGracefully shutting down from SIGINT (Ctrl-C)');
