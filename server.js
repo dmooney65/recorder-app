@@ -1,9 +1,7 @@
 const path = require('path');
+const compression = require('compression');
 const express = require('express');
-const http = require('http');
 const favicon = require('serve-favicon');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const index = require('./routes/indexRouter');
 const settingsRoute = require('./routes/settingsRouter');
@@ -14,12 +12,10 @@ const wssServer = require('./wssServer.js');
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use(compression());
 app.use(favicon(path.join(__dirname, 'public', '/images/favicon.ico')));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/bootstrap')));
@@ -43,7 +39,7 @@ app.use(function (error, req, res) {
     res.render('500.jade', {title:'500: Internal Server Error', error: error});
 });
 
-const server = http.createServer(app);
+const server = require('http').createServer(app);
 server.listen(3000, function listening() {
     console.log('Listening on %d', server.address().port, ' host', server.address().address);
 });

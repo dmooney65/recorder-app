@@ -1,12 +1,12 @@
 extends layout
 
+block append head
+    script(defer src='/js/recordings.js')
+    //-- var values = [];
+        
 block content
     include nav.pug
 
-    append head
-        script(src='/js/recordings.js')
-        //-- var values = [];
-        
     div.container
         div.page-header Manage Recordings
 

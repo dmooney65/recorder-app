@@ -1,7 +1,7 @@
 const path = require('path');
 const flac = require('flac-bindings');
 const fs = require('fs');
-const header = require('waveheader');
+const header = require('./waveheader.js');
 
 const recordingsPath = process.argv[2];
 const settings = JSON.parse(process.argv[3]);

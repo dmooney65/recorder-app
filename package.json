@@ -6,22 +6,20 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "body-parser": "~1.18.2",
+    "body-parser": "^1.18.3",
     "bootstrap": "^3.3.7",
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.15.5",
+    "compression": "^1.7.3",
+    "express": "^4.16.3",
     "flac-bindings": "dmooney65/node-flac-bindings",
     "gpio-button": "^0.2.0",
     "ip": "^1.1.5",
     "jquery": "^3.2.1",
     "mediainfo-wrapper": "dmooney65/mediainfo-wrapper",
-    "morgan": "~1.9.0",
+    "morgan": "^1.9.0",
     "node-usb-detection": "^1.0.2",
     "onoff": "^3.2.0",
-    "pug": "^2.0.0-rc.4",
-    "serve-favicon": "~2.4.5",
-    "waveheader": "0.0.2",
+    "pug": "^2.0.3",
+    "serve-favicon": "^2.4.5",
     "ws": "^3.3.2"
   }
 }

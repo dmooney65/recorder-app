@@ -1,13 +1,13 @@
 extends layout
 
+block append head
+    script(defer src='/js/controls.js')
+    //-script(src='/js/volume-meter.js') 
+
 block content
     include nav.pug
 
     div.container
         div.page-header Main Controls
-    
-    block append head
-        script(src='/js/controls.js')
-        script(src='/js/volume-meter.js') 
 
     include controls.pug
