@@ -18,12 +18,12 @@ Recorder App is targeted at SBCs such as the Raspberry Pi with an audio HAT such
 - Configurable to run as a service (example configs included).
 - Configurable to auto mount USB drives to store recordings (example configs included).
 
-##Dependencies
+## Dependencies
 Requires libflac8 (FLAC recordings) libudev-dev (USB media) jq (JSON parser) pmount (USB media) mediainfo (audio file info) ffmpeg (re-encoding) bc (needed for led control).
 
 Install using `sudo apt install -y libflac8 libudev-dev jq pmount mediainfo ffmpeg bc` on Debian/Ubuntu based systems.
 
-##Running
+## Running
 Clone the repo, install node modules.
 `git clone https://github.com/dmooney65/recorder-app.git`
 `cd recorder-app`
