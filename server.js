@@ -49,8 +49,7 @@ var wss = wssServer.WebsocketServer();
 wss.createServer(server);
 
 process.on('SIGINT', function () {
-    console.log('\nGracefully shutting down from SIGINT (Ctrl-C)');
-    // some other closing procedures go here
+    console.log('\nShutting down from SIGINT (Ctrl-C)');
     process.exit();
 });
 
