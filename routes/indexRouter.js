@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 //var os = require('os');
-var audio = require('../src/audioController.js');
+var server = require('../server.js');
 
 /* GET home page. */
 router.get('/', function (req, res) {
@@ -13,7 +13,7 @@ var player;
 var controls = function (req, res) {
 
     if (!player) {
-        player = audio.Player();
+        player = server.getPlayer();
     }
     //Execute player function based on param
     var response = player[req.body.command]();

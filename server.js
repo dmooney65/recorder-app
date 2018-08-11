@@ -7,6 +7,7 @@ const index = require('./routes/indexRouter');
 const settingsRoute = require('./routes/settingsRouter');
 const recordingsRoute = require('./routes/recordingsRouter');
 const app = express();
+const audio = require('./src/audioController.js');
 const wssServer = require('./wssServer.js');
 
 app.set('view engine', 'pug');
@@ -47,6 +48,10 @@ server.listen(3000, function listening() {
 server.on('error', () => console.log('server errored'));
 var wss = wssServer.WebsocketServer();
 wss.createServer(server);
+const player = audio.Player();
+module.exports.getPlayer = () => {
+    return player;
+}
 
 process.on('SIGINT', function () {
     console.log('\nShutting down from SIGINT (Ctrl-C)');
@@ -58,5 +63,8 @@ process.on('unhandledRejection', (err) => {
 });
 
 //Uncomment these lines if using a pi with the button overlay functionality
-//const { fork } = require('child_process');
-//global.buttonLedWorker = fork(__dirname + '/controlScripts/audioinjector/ButtonLedWorker.js', []);
+const { fork } = require('child_process');
+global.buttonLedWorker = fork(__dirname + '/controlScripts/audioinjector/ButtonLedWorker.js', []);
+//var args = [path.join(__dirname, '/controlScripts/audioinjector/ButtonLedWorker.js')];
+//global.buttonLedWorker = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
+
