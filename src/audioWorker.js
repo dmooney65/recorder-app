@@ -101,11 +101,6 @@ let setRecordingsPath = (path) => {
 
 process.on('message', (msg) => {
     switch (msg.command) {
-        case 'end':
-            console.log('exiting')
-            process.disconnect();
-            process.exit(0);
-            break;
         case 'settings':
             settings = msg.arg;
             break;
@@ -129,6 +124,14 @@ process.on('message', (msg) => {
             break;
     }
 
+});
+
+process.on("SIGINT", function () {
+    console.log('\nGot SIGINT (Ctrl-C)');
+    // Cleanup activities go here...
+    process.disconnect();
+    // Then shutdown.
+    process.exit(0);
 });
 
 let broadcastStatus = () => {

@@ -1,10 +1,12 @@
 
 [Unit]
 Description=Node.js Recording App service
-Requires=network-online.target       # Requires the network service to run first
+Requires=network-online.target       
 
 [Service]
 User=pi
+# Kill any orphaned node processes.
+ExecStartPre=if /usr/bin/pgrep node; then /usr/bin/killall node; fi
 ExecStart=/usr/bin/node /home/pi/source/recorder-app/server.js
 # Required on some systems
 #WorkingDirectory=/opt/nodeserver

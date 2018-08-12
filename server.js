@@ -8,7 +8,7 @@ const recordingsRoute = require('./routes/recordingsRouter');
 const app = express();
 const wssServer = require('./wssServer.js');
 
-const { fork } = require('child_process');
+const { spawn, fork } = require('child_process');
 global.audioWorker = fork(__dirname + '/src/audioWorker.js', []);
 const settingsController = require('./src/settingsController');
 settings = settingsController.get().then(function (settings) {
@@ -70,18 +70,12 @@ server.on('error', () => console.log('server errored'));
 var wss = wssServer.WebsocketServer();
 wss.createServer(server);
 
-//module.exports.getPlayer = () => {
-//    return audioWorker;
-//}
-
-//const player = audio.Player();
-//module.exports.getPlayer = () => {
-//    return player;
-//}
-
-process.on('SIGINT', function () {
-    global.audioWorker.send({ command: 'end' });
+process.on('SIGINT', () => {
     console.log('\nShutting down from SIGINT (Ctrl-C)');
+    //Take care of exit weirdness on Pi
+    if(process.arch='arm'){
+        spawn('killall',['node']);
+    }
     process.exit();
 });
 
