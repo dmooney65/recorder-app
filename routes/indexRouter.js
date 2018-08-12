@@ -1,27 +1,36 @@
 var express = require('express');
 var router = express.Router();
-//var os = require('os');
-var server = require('../server.js');
 
 /* GET home page. */
 router.get('/', function (req, res) {
     res.render('index');
 });
 
-var player;
+var status;
 
-var controls = function (req, res) {
-
-    if (!player) {
-        player = server.getPlayer();
+global.audioWorker.on('message', function (msg) {
+    //Exclude clipping messages
+    if (!msg.hasOwnProperty('clipping')) {
+        status = msg;
     }
+});
+
+router.post('/audio', function (req, res) {
+
     //Execute player function based on param
-    var response = player[req.body.command]();
-    res.send(response);
-};
-
-
-router.post('/audio', controls);
+    if (global.audioWorker.send({ command: req.body.command })) {
+        switch (req.body.command) {
+            case 'getStatus':
+                res.send(status);
+                break;
+            default:
+                //Hack to make sure up to date status is returned
+                setTimeout(() => {
+                    res.send(status);
+                }, 500);
+        }
+    }
+});
 
 
 module.exports = router;

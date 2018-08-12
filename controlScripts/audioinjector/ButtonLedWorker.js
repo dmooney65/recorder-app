@@ -9,13 +9,24 @@ let prev = 'release';
 let pressed = 0;
 let hold = 0;
 
-process.on('message', (msg) => {
+/*global.audioWorker.on('message', (msg) => {
+    console.log(msg);
+    if(msg.hasOwnProperty('clipping')){
+        console.log('button clipping');
+        blinkLed(300)
+    }
+    //switch (msg.command) {
+    //case 'blinkLed': blinkLed(msg.arg); break;
+    //}
+});*/
+
+/*process.on('message', (msg) => {
     switch (msg.command) {
     case 'blinkLed': blinkLed(msg.arg); break;
     }
-});
+});*/
 
-process.on('SIGTERM', function () {
+/*process.on('SIGTERM', function () {
     //console.log('SIGTERM');
     led.unexport();
     process.exit(0);
@@ -25,7 +36,7 @@ process.on('SIGINT', function () {
     //console.log('SIGINT');
     led.unexport();
     process.exit(0);
-});
+});*/
 
 button.on('press', function () {
     time = 0;
@@ -78,6 +89,10 @@ var blinkLed = (blinkTime) => {
         led.writeSync(0);
     }, blinkTime);
 };
+
+module.exports.blinkLed = (blinkTime) => {
+    blinkLed(blinkTime);
+}
 
 var countPresses = () => {
     // If button not pressed within timeout, stop adding to pressed count and do actions

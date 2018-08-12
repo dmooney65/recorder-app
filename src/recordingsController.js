@@ -1,7 +1,7 @@
 const fs = require('fs');
 var mediaInfo = require('mediainfo-wrapper');
 const { spawn } = require('child_process');
-const settings = require('./settingsController.js')();
+const settings = require('./settingsController.js');
 
 module.exports.readFiles = (dir) => {
     

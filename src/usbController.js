@@ -2,7 +2,6 @@ var spawn = require('child_process').spawn;
 var rl = require('readline');
 var path = require('path');
 var os = require('os');
-var server = require('../server.js');
 var filePath;
 var monitor = require('node-usb-detection');
 
@@ -35,7 +34,6 @@ var read = () => {
 var findRecordingPath = () => {
 
     read().then(function (data) {
-        var player = server.getPlayer();
         var resp;
         if (data.length > 0) {
             resp = path.join(data[0], '/');
@@ -43,7 +41,7 @@ var findRecordingPath = () => {
             resp = path.join(os.homedir(), '/Music/');
         }
         filePath = resp;
-        player.setRecordingsPath(resp);
+        global.audioWorker.send({ command: 'setRecordingsPath', arg: resp });
     });
 };
 findRecordingPath();
