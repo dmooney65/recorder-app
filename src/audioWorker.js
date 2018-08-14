@@ -21,7 +21,7 @@ let play = () => {
         '-r', settings.sampleRate, '-D', settings.captureDevice);
     this.arecord = spawn(
         'arecord', ['-t', 'raw', '-f', settings.bitFormat, '-c', 2,
-            '-r', settings.sampleRate, '-D', settings.captureDevice, '--max-file-time', '216000']
+            '-r', settings.sampleRate, '-D', settings.captureDevice]
     );
 
     this.arecord.on('close', (code, signal) => {
