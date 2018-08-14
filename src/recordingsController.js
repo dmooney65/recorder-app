@@ -4,7 +4,7 @@ const { spawn } = require('child_process');
 const settings = require('./settingsController.js');
 
 module.exports.readFiles = (dir) => {
-    
+
     return mediaInfo({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.wav', '**/*.mp3').then(function (data) {
         var ret = [];
         for (var i in data) {
@@ -35,7 +35,9 @@ module.exports.readFiles = (dir) => {
 
         }
         return (ret);
-    }).catch(function (e) { console.log('next error ',e); return [];});
+    }).catch(function () { //console.log(e); 
+        return [];
+    });
 };
 
 

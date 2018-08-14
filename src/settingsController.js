@@ -86,7 +86,7 @@ module.exports.save = (newSettings) =>{
 
     fs.readFileAsync(filePath).then((data) => {
         
-        settings = JSON.parse(data);
+        var settings = JSON.parse(data);
         for (var property in newSettings) {
             if (newSettings.hasOwnProperty(property)) {
                 settings[property] = newSettings[property];
@@ -109,9 +109,9 @@ module.exports.save = (newSettings) =>{
             global.audioWorker.send({ command: 'settings', arg: settings });
         });
         
-    })
+    });
     
-}
+};
 
 
 

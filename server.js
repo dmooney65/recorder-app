@@ -11,12 +11,12 @@ const wssServer = require('./wssServer.js');
 const { spawn, fork } = require('child_process');
 global.audioWorker = fork(__dirname + '/src/audioWorker.js', []);
 const settingsController = require('./src/settingsController');
-settings = settingsController.get().then(function (settings) {
+settingsController.get().then(function (settings) {
     global.audioWorker.send({ command: 'settings', arg: settings });
     if (settings.buttonControl) {
         if (settings.audioCard == 'generic' || settings.audioCard == 'audioinjector') {
             var reqStr = `./controlScripts/${settings.audioCard}/ButtonLedWorker.js`;
-            buttonLedWorker = require(reqStr);
+            let buttonLedWorker = require(reqStr);
             global.audioWorker.on('message', (msg) => {
                 if (msg.hasOwnProperty('clipping')) {
                     buttonLedWorker.blinkLed(250);
@@ -28,7 +28,7 @@ settings = settingsController.get().then(function (settings) {
 
 const index = require('./routes/indexRouter');
 const mediaPath = require('./src/usbController');
-global.audioWorker.send({ command: 'setRecordingsPath', arg: mediaPath.getRecordingPath() })
+global.audioWorker.send({ command: 'setRecordingsPath', arg: mediaPath.getRecordingPath() });
 
 
 app.set('view engine', 'pug');
@@ -73,8 +73,8 @@ wss.createServer(server);
 process.on('SIGINT', () => {
     console.log('\nShutting down from SIGINT (Ctrl-C)');
     //Take care of exit weirdness on Pi
-    if(process.arch='arm'){
-        spawn('killall',['node']);
+    if (process.arch == 'arm') {
+        spawn('killall', ['node']);
     }
     process.exit();
 });

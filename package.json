@@ -16,7 +16,8 @@
         "24/96"
     ],
     "scripts": {
-        "start": "node server.js"
+        "start": "node server.js",
+        "lint": "eslint src public server.js wssServer.js --color"
     },
     "author": "Dominic Mooney <dominic.mooney99@gmail.com>",
     "description": "A Node/Express server and Web app for recording audio from line-in or mic with remote control",

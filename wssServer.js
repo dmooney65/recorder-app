@@ -5,7 +5,7 @@ module.exports.WebsocketServer = () => {
     global.audioWorker.on('message', function (msg) {
         wss.broadcast(msg);
     });
-    global.audioWorker.send({ command: 'getStatus' })
+    global.audioWorker.send({ command: 'getStatus' });
 
     let createServer = (server) => {
 

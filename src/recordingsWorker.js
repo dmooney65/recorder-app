@@ -40,6 +40,19 @@ if (settings.highResFormat == 'wav') {
     });
 }
 
+fileWriter.on('close', () => {
+    console.log('close called');
+});
+
+fileWriter.on('error', (err) => {
+    console.log('error called=', err);
+});
+
+fileWriter.on('unpipe', () => {
+    console.error('Something has stopped piping into the writer.');
+    //assert.equal(src, reader);
+});
+
 process.on('message', () => {
     fileWriter.end(() => {
         process.disconnect();

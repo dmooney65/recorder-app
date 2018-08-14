@@ -92,7 +92,7 @@ var blinkLed = (blinkTime) => {
 
 module.exports.blinkLed = (blinkTime) => {
     blinkLed(blinkTime);
-}
+};
 
 var countPresses = () => {
     // If button not pressed within timeout, stop adding to pressed count and do actions

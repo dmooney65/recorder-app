@@ -3,29 +3,31 @@ var router = express.Router();
 var files = require('../src/recordingsController');
 var os = require('os');
 var spawn = require('child_process').spawnSync;
+var usb = require('../src/usbController');
 
 
 router.get('/', function (req, res) {
     var localResp = files.readFiles(os.homedir() + '/Music/');
 
     localResp.then(function (localResults) {
-        var ls = spawn('ls', ['/media/']);
-        var lines = ls.stdout.toString().split('\n');
-        var usbResp;
-        lines.forEach(line => {
+
+        var usbPath = (usb.getRecordingPath())
+        if (usbPath.indexOf('media') > 0) {
             try {
-                usbResp = files.readFiles('/media/' + line.toString() + '/');
+                usbResp = files.readFiles(usbPath);
             } catch (e) {
                 //Errors here are probably permission related so ignore
             }
-        });
 
-        usbResp.then(function (usbResults) {
-            res.render('recordings', { 'localResults': localResults, 'usbResults': usbResults });
-        });
-        usbResp.catch(function () {
-            console.log('Promise Rejected');
-        });
+            usbResp.then(function (usbResults) {
+                res.render('recordings', { 'localResults': localResults, 'usbResults': usbResults });
+            });
+            usbResp.catch(function () {
+                console.log('Promise Rejected');
+            });
+        } else {
+            res.render('recordings', { 'localResults': localResults, 'usbResults': [] });
+        }
     });
 
     localResp.catch(function () {
@@ -46,15 +48,15 @@ router.get('/delete', function (req, res) {
 router.get('/download', function (req, res) {
     var file = req.query.file;
     switch (true) {
-    case (file.indexOf('flac') >= 0):
-        res.setHeader('Content-Type', 'audio/flac');
-        break;
-    case (file.indexOf('wav') >= 0):
-        res.setHeader('Content-Type', 'audio/wav');
-        break;
-    case (file.indexOf('mp3') >= 0):
-        res.setHeader('Content-Type', 'audio/mp3');
-        break;
+        case (file.indexOf('flac') >= 0):
+            res.setHeader('Content-Type', 'audio/flac');
+            break;
+        case (file.indexOf('wav') >= 0):
+            res.setHeader('Content-Type', 'audio/wav');
+            break;
+        case (file.indexOf('mp3') >= 0):
+            res.setHeader('Content-Type', 'audio/mp3');
+            break;
     }
     /*if (file.indexOf('flac') >= 0) {
         console.log('FLAC file');

@@ -17,11 +17,11 @@ passThrough.on('data', (chunk) => {
 
 let play = () => {
 
-    console.log('arecord ', '-f', settings.bitFormat, '-c', 2,
+    console.log('arecord ', '-t', 'raw', '-f', settings.bitFormat, '-c', 2,
         '-r', settings.sampleRate, '-D', settings.captureDevice);
     this.arecord = spawn(
-        'arecord', ['-f', settings.bitFormat, '-c', 2,
-            '-r', settings.sampleRate, '-D', settings.captureDevice]
+        'arecord', ['-t', 'raw', '-f', settings.bitFormat, '-c', 2,
+            '-r', settings.sampleRate, '-D', settings.captureDevice, '--max-file-time', '216000']
     );
 
     this.arecord.on('close', (code, signal) => {
@@ -52,8 +52,10 @@ let play = () => {
     this.arecord.stdout.pipe(this.transform, { end: false }).pipe(passThrough, { end: false });
 
 
-    console.log('aplay ', '-D', settings.playbackDevice);
-    this.aplay = spawn('aplay', ['-D', settings.playbackDevice]);
+    console.log('aplay ', '-f', settings.bitFormat, '-c', 2,
+        '-r', settings.sampleRate, '-D', settings.playbackDevice);
+    this.aplay = spawn('aplay', ['-f', settings.bitFormat, '-c', 2,
+        '-r', settings.sampleRate, '-D', settings.playbackDevice]);
 
     this.aplay.on('close', (code, signal) => {
         console.log(
@@ -101,32 +103,32 @@ let setRecordingsPath = (path) => {
 
 process.on('message', (msg) => {
     switch (msg.command) {
-        case 'settings':
-            settings = msg.arg;
-            break;
-        case 'getStatus':
-            broadcastStatus();
-            break;
-        case 'play':
-            play();
-            break;
-        case 'stop':
-            stop();
-            break;
-        case 'startRecord':
-            startRecord();
-            break;
-        case 'stopRecord':
-            stopRecord();
-            break;
-        case 'setRecordingsPath':
-            setRecordingsPath(msg.arg);
-            break;
+    case 'settings':
+        settings = msg.arg;
+        break;
+    case 'getStatus':
+        broadcastStatus();
+        break;
+    case 'play':
+        play();
+        break;
+    case 'stop':
+        stop();
+        break;
+    case 'startRecord':
+        startRecord();
+        break;
+    case 'stopRecord':
+        stopRecord();
+        break;
+    case 'setRecordingsPath':
+        setRecordingsPath(msg.arg);
+        break;
     }
 
 });
 
-process.on("SIGINT", function () {
+process.on('SIGINT', function () {
     console.log('\nGot SIGINT (Ctrl-C)');
     // Cleanup activities go here...
     process.disconnect();
