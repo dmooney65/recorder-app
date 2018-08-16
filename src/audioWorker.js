@@ -17,11 +17,11 @@ passThrough.on('data', (chunk) => {
 
 let play = () => {
 
-    console.log('arecord ', '-t', 'raw', '-f', settings.bitFormat, '-c', 2,
-        '-r', settings.sampleRate, '-D', settings.captureDevice);
+    //console.log('arecord ', '-t', 'raw', '-f', settings.bitFormat, '-c', 2,
+    //    '-r', settings.sampleRate, '-D', settings.captureDevice);
     this.arecord = spawn(
-        'arecord', ['-t', 'raw', '-f', settings.bitFormat, '-c', 2,
-            '-r', settings.sampleRate, '-D', settings.captureDevice, '--max-file-time', '216000']
+        'arecord', ['--fatal-errors','-v', '-t', 'raw', '-f', settings.bitFormat, '-c', 2,
+            '-r', settings.sampleRate, '-D', settings.captureDevice]
     );
 
     this.arecord.on('close', (code, signal) => {
@@ -47,16 +47,21 @@ let play = () => {
         //broadcastStatus();
     });*/
 
+    this.arecord.stderr.pipe(process.stdout);
+
     this.transform = ClipDetect({ inputBitDepth: settings.bitFormat.replace(/\D/g, '') });
 
     this.arecord.stdout.pipe(this.transform, { end: false }).pipe(passThrough, { end: false });
 
 
-    console.log('aplay ', '-f', settings.bitFormat, '-c', 2,
-        '-r', settings.sampleRate, '-D', settings.playbackDevice);
+
+
+    //console.log('aplay ', '-f', settings.bitFormat, '-c', 2,
+    //    '-r', settings.sampleRate, '-D', settings.playbackDevice);
     this.aplay = spawn('aplay', ['-f', settings.bitFormat, '-c', 2,
         '-r', settings.sampleRate, '-D', settings.playbackDevice]);
 
+    this.aplay.stderr.pipe(process.stdout);
     this.aplay.on('close', (code, signal) => {
         console.log(
             `play  process terminated due to receipt of signal ${signal} code ${code}`);

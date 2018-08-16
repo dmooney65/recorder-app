@@ -28,53 +28,42 @@ module.exports.get = () => {
     return fs.readFileAsync(filePath).then((data) => {
         var settings = JSON.parse(data);
         return settings;
-    }
-    ).catch((error) => {
-        console.log(error);
-        var newSettings;
-        var captureDevice = 'default';
-        var playbackDevice = 'default';
-        var audioCard = 'generic';
-        var native24bit = 'false';
-        var cmdline = 'ls /sys/bus/platform/drivers | grep "pisound\\|audioinj"';
-        require('child_process').exec(cmdline, function (error, stdout, stderr) {
-            if (error) {
-                console.log(stderr);
-            }
-            if (stdout.includes('pisound')) {
-                audioCard = 'pisound';
-                captureDevice = 'hw:0,0';
-                playbackDevice = 'hw:0,0';
-                native24bit = 'true';
-            } else if (stdout.includes('audioinjector')) {
-                audioCard = 'audioinjector';
-                captureDevice = 'hw:0,0';
-                playbackDevice = 'hw:0,0';
-                native24bit = 'true';
-            }
-            newSettings = {
-                'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5',
-                'mp3Rate': '3', 'captureDevice': captureDevice, 'highResFormat': 'flac',
-                'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false,
-                'playbackDevice': playbackDevice, 'audioCard': audioCard, 'buttonControl': false
-            };
-            create(newSettings);
-        });
-    });
+    });//.catch((error) => {
+    //console.log(error);
+
+    //});
 };
 
-let create = (settings) => {
-    if (settings.bitDepth == '24') {
-        if (settings.highResFormat == 'wav' || settings.native24Bit == 'false') {
-            settings.bitFormat = 'S32_LE';
-        } else {
-            settings.bitFormat = 'S24_LE';
+let createDefault = () => {
+    var settings;
+    var captureDevice = 'default';
+    var playbackDevice = 'default';
+    var audioCard = 'generic';
+    var native24bit = 'false';
+    var cmdline = 'ls /sys/bus/platform/drivers | grep "pisound\\|audioinj"';
+    require('child_process').exec(cmdline, function (error, stdout, stderr) {
+        if (error) {
+            console.log(stderr);
         }
-        settings.inputAs32 = true;
-    } else {
-        settings.bitFormat = 'S16_LE';
-        settings.inputAs32 = false;
-    }
+        if (stdout.includes('pisound')) {
+            audioCard = 'pisound';
+            captureDevice = 'hw:0,0';
+            playbackDevice = 'default';
+            native24bit = 'true';
+        } else if (stdout.includes('audioinjector')) {
+            audioCard = 'audioinjector';
+            captureDevice = 'hw:0,0';
+            playbackDevice = 'default';
+            native24bit = 'true';
+        }
+        settings = {
+            'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5',
+            'mp3Rate': '3', 'captureDevice': captureDevice, 'highResFormat': 'flac',
+            'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false,
+            'playbackDevice': playbackDevice, 'audioCard': audioCard, 'buttonControl': false
+        };
+        //create(newSettings);
+    });
     fs.writeFileAsync(filePath, JSON.stringify(settings)).then((err) => {
         if (err) throw err;
         global.audioWorker.send({ command: 'settings', arg: settings });
@@ -82,10 +71,10 @@ let create = (settings) => {
 
 };
 
-module.exports.save = (newSettings) =>{
+module.exports.save = (newSettings) => {
 
     fs.readFileAsync(filePath).then((data) => {
-        
+
         var settings = JSON.parse(data);
         for (var property in newSettings) {
             if (newSettings.hasOwnProperty(property)) {
@@ -108,9 +97,9 @@ module.exports.save = (newSettings) =>{
             if (err) throw err;
             global.audioWorker.send({ command: 'settings', arg: settings });
         });
-        
+
     });
-    
+
 };
 
 
