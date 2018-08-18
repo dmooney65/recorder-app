@@ -36,7 +36,7 @@ module.exports.get = () => {
 
 let createDefault = () => {
     var settings;
-    var captureDevice = 'default';
+    var captureDevice = 'hw:0,0';
     var playbackDevice = 'default';
     var audioCard = 'generic';
     var native24bit = 'false';
@@ -47,23 +47,18 @@ let createDefault = () => {
         }
         if (stdout.includes('pisound')) {
             audioCard = 'pisound';
-            captureDevice = 'hw:0,0';
-            playbackDevice = 'default';
             native24bit = 'true';
         } else if (stdout.includes('audioinjector')) {
             audioCard = 'audioinjector';
-            captureDevice = 'hw:0,0';
-            playbackDevice = 'default';
             native24bit = 'true';
         }
-        settings = {
-            'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5',
-            'mp3Rate': '3', 'captureDevice': captureDevice, 'highResFormat': 'flac',
-            'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false,
-            'playbackDevice': playbackDevice, 'audioCard': audioCard, 'buttonControl': false
-        };
-        //create(newSettings);
     });
+    settings = {
+        'bitDepth': '16', 'sampleRate': '48000', 'compressionLevel': '5',
+        'mp3Rate': '0', 'captureDevice': captureDevice, 'highResFormat': 'flac',
+        'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false,
+        'playbackDevice': playbackDevice, 'audioCard': audioCard, 'buttonControl': false
+    };
     fs.writeFileAsync(filePath, JSON.stringify(settings)).then((err) => {
         if (err) throw err;
         global.audioWorker.send({ command: 'settings', arg: settings });

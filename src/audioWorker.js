@@ -17,10 +17,8 @@ passThrough.on('data', (chunk) => {
 
 let play = () => {
 
-    //console.log('arecord ', '-t', 'raw', '-f', settings.bitFormat, '-c', 2,
-    //    '-r', settings.sampleRate, '-D', settings.captureDevice);
     this.arecord = spawn(
-        'arecord', ['--fatal-errors','-v', '-t', 'raw', '-f', settings.bitFormat, '-c', 2,
+        'arecord', ['-v', '-t', 'raw', '-f', settings.bitFormat, '-c', 2,
             '-r', settings.sampleRate, '-D', settings.captureDevice]
     );
 
@@ -54,10 +52,6 @@ let play = () => {
     this.arecord.stdout.pipe(this.transform, { end: false }).pipe(passThrough, { end: false });
 
 
-
-
-    //console.log('aplay ', '-f', settings.bitFormat, '-c', 2,
-    //    '-r', settings.sampleRate, '-D', settings.playbackDevice);
     this.aplay = spawn('aplay', ['-f', settings.bitFormat, '-c', 2,
         '-r', settings.sampleRate, '-D', settings.playbackDevice]);
 
@@ -135,9 +129,10 @@ process.on('message', (msg) => {
 
 process.on('SIGINT', function () {
     console.log('\nGot SIGINT (Ctrl-C)');
-    // Cleanup activities go here...
+    if(playing){
+        stop();
+    }
     process.disconnect();
-    // Then shutdown.
     process.exit(0);
 });
 

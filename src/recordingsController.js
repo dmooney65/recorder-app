@@ -1,7 +1,7 @@
 const fs = require('fs');
 var mediaInfo = require('mediainfo-wrapper');
 const { spawn } = require('child_process');
-const settings = require('./settingsController.js');
+const settingsController = require('./settingsController.js');
 
 module.exports.readFiles = (dir) => {
 
@@ -48,27 +48,23 @@ module.exports.deleteFile = (file) => {
 
 module.exports.encodeFile = (file) => {
 
-    var transcode;
-    if (file.indexOf('wav') > 0) {
-        transcode = spawn(
-            'ffmpeg', ['-i', file, '-codec:a', 'flac',
-                '-compression_level', '5', file.replace('.wav', '.flac')],
-            {
-                stdio: 'ignore'
-            }
-        );
-    } else {
-        transcode = spawn(
-            'ffmpeg', ['-i', file, '-codec:a', 'libmp3lame',
-                '-qscale:a', settings.get('mp3Rate'), file.replace('.flac', '.mp3')],
-            {
-                stdio: 'ignore'
-            }
-        );
-    }
+    settingsController.get().then(function (settings) {
+        var transcode;
+        if (file.indexOf('wav') > 0) {
+            transcode = spawn(
+                'ffmpeg', ['-i', file, '-codec:a', 'flac',
+                    '-compression_level', settings.compressionLevel, file.replace('.wav', '.flac')]
+            );
+        } else {
+            transcode = spawn(
+                'ffmpeg', ['-i', file, '-codec:a', 'libmp3lame',
+                    '-qscale:a', settings.mp3Rate, file.replace('.flac', '.mp3')]
+            );
+        }
 
-    transcode.on('close', (code) => {
-        console.log(`transcode child process exited with code ${code}`);
+        transcode.on('close', (code) => {
+            console.log(`transcode child process exited with code ${code}`);
+        });
     });
 
 };

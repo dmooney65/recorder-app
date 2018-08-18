@@ -3,4 +3,5 @@ block content
     .container
         h1= title
         p #{title}
-        p #{error}
+        p #{error.status}
+        pre #{error.stack}

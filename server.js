@@ -58,7 +58,7 @@ app.use(function (req, res) {
 // Handle 500
 app.use(function (error, req, res) {
     res.status(500);
-    res.render('500.jade', { title: '500: Internal Server Error', error: error });
+    res.render('500', { title: '500: Internal Server Error', error: error });
 });
 
 const server = require('http').createServer(app);
