@@ -2,20 +2,20 @@ var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function (req, res) {
+router.get('/', (req, res) => {
     res.render('index');
 });
 
 var status;
 
-global.audioWorker.on('message', function (msg) {
+global.audioWorker.on('message', (msg) => {
     //Exclude clipping messages
     if (!msg.hasOwnProperty('clipping')) {
         status = msg;
     }
 });
 
-router.post('/audio', function (req, res) {
+router.post('/audio', (req, res) => {
 
     //Execute player function based on param
     if (global.audioWorker.send({ command: req.body.command })) {

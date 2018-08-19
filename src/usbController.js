@@ -6,9 +6,9 @@ var filePath;
 var monitor = require('node-usb-detection');
 
 
-monitor.change(function() {
-    setTimeout(function(){ 
-        findRecordingPath(); 
+monitor.change(() => {
+    setTimeout(() => {
+        findRecordingPath();
     }, 2000);
 });
 
@@ -17,8 +17,8 @@ var read = () => {
     var df = spawn('df', []);
     var linereader = rl.createInterface(df.stdout);
 
-    return new Promise(function (resolve) {
-        linereader.on('line', function (data) {
+    return new Promise((resolve) => {
+        linereader.on('line', (data) => {
             if (data.toString().substr(0, 7) == '/dev/sd') {
                 if (data.includes('/media/')) {
                     var mountPoint = data.substr(data.indexOf('/media/'), data.length);
@@ -33,7 +33,7 @@ var read = () => {
 
 var findRecordingPath = () => {
 
-    read().then(function (data) {
+    read().then((data) => {
         var resp;
         if (data.length > 0) {
             resp = path.join(data[0], '/');

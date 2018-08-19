@@ -5,7 +5,7 @@ const settingsController = require('./settingsController.js');
 
 module.exports.readFiles = (dir) => {
 
-    return mediaInfo({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.wav', '**/*.mp3').then(function (data) {
+    return mediaInfo({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.wav', '**/*.mp3').then((data) => {
         var ret = [];
         for (var i in data) {
             var fullPath = dir + data[i].file;
@@ -35,7 +35,7 @@ module.exports.readFiles = (dir) => {
 
         }
         return (ret);
-    }).catch(function () { //console.log(e); 
+    }).catch(() => { //console.log(e); 
         return [];
     });
 };
@@ -48,17 +48,24 @@ module.exports.deleteFile = (file) => {
 
 module.exports.encodeFile = (file) => {
 
-    settingsController.get().then(function (settings) {
+    settingsController.get().then((settings) => {
         var transcode;
+        console.log('Transcoding file: ', file);
         if (file.indexOf('wav') > 0) {
             transcode = spawn(
                 'ffmpeg', ['-i', file, '-codec:a', 'flac',
-                    '-compression_level', settings.compressionLevel, file.replace('.wav', '.flac')]
+                    '-compression_level', settings.compressionLevel, file.replace('.wav', '.flac')],
+                {
+                    stdio: 'ignore'
+                }
             );
         } else {
             transcode = spawn(
                 'ffmpeg', ['-i', file, '-codec:a', 'libmp3lame',
-                    '-qscale:a', settings.mp3Rate, file.replace('.flac', '.mp3')]
+                    '-qscale:a', settings.mp3Rate, file.replace('.flac', '.mp3')],
+                {
+                    stdio: 'ignore'
+                }
             );
         }
 

@@ -26,19 +26,19 @@ let hold = 0;
     }
 });*/
 
-/*process.on('SIGTERM', function () {
+/*process.on('SIGTERM', () => {
     //console.log('SIGTERM');
     led.unexport();
     process.exit(0);
 });
 
-process.on('SIGINT', function () {
+process.on('SIGINT', () => {
     //console.log('SIGINT');
     led.unexport();
     process.exit(0);
 });*/
 
-button.on('press', function () {
+button.on('press', () => {
     time = 0;
     if (prev == 'release') {
         pressed++;
@@ -49,7 +49,7 @@ button.on('press', function () {
     prev = 'press';
 });
 
-button.on('hold', function () {
+button.on('hold', () => {
     pressed = 0;
     if (time > 1000) {
         blinkLed(200);
@@ -60,7 +60,7 @@ button.on('hold', function () {
     prev = 'hold';
 });
 
-button.on('release', function () {
+button.on('release', () => {
     if (hold > 0) {
         doHoldAction(hold);
     }
@@ -96,7 +96,7 @@ module.exports.blinkLed = (blinkTime) => {
 
 var countPresses = () => {
     // If button not pressed within timeout, stop adding to pressed count and do actions
-    setTimeout(function () {
+    setTimeout(() => {
         if (!button.pressed()) {
             doClickAction(pressed);
             pressed = 0;
@@ -109,40 +109,40 @@ var countPresses = () => {
 
 var doClickAction = (presses) => {
     switch (presses) {
-    case 1:
-        exec(__dirname + '/togglePlaying.sh',
-            {
-                stdio: 'ignore'
-            });
-        blinkLedRepeat(150, presses);
-        break;
-    case 2:
-        exec(__dirname + '/toggleRecording.sh',
-            {
-                stdio: 'ignore'
-            });
-        blinkLedRepeat(150, presses);
-        break;
-    default:
-        console.log('no action');
-        break;
+        case 1:
+            exec(__dirname + '/togglePlaying.sh',
+                {
+                    stdio: 'ignore'
+                });
+            blinkLedRepeat(150, presses);
+            break;
+        case 2:
+            exec(__dirname + '/toggleRecording.sh',
+                {
+                    stdio: 'ignore'
+                });
+            blinkLedRepeat(150, presses);
+            break;
+        default:
+            console.log('no action');
+            break;
     }
 };
 
 var doHoldAction = (held) => {
     //console.log('held times ', held);
     switch (held) {
-    case 5:
-        blinkLedRepeat(150, held);
-        setTimeout(() => {
-            exec('sudo shutdown now',
-                {
-                    stdio: 'ignore'
-                });
-        }, 2000);
-        break;
-    default:
-        //console.log('no action');
-        break;
+        case 5:
+            blinkLedRepeat(150, held);
+            setTimeout(() => {
+                exec('sudo shutdown now',
+                    {
+                        stdio: 'ignore'
+                    });
+            }, 2000);
+            break;
+        default:
+            //console.log('no action');
+            break;
     }
 };

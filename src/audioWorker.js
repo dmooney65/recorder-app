@@ -102,34 +102,34 @@ let setRecordingsPath = (path) => {
 
 process.on('message', (msg) => {
     switch (msg.command) {
-    case 'settings':
-        settings = msg.arg;
-        break;
-    case 'getStatus':
-        broadcastStatus();
-        break;
-    case 'play':
-        play();
-        break;
-    case 'stop':
-        stop();
-        break;
-    case 'startRecord':
-        startRecord();
-        break;
-    case 'stopRecord':
-        stopRecord();
-        break;
-    case 'setRecordingsPath':
-        setRecordingsPath(msg.arg);
-        break;
+        case 'settings':
+            settings = msg.arg;
+            break;
+        case 'getStatus':
+            broadcastStatus();
+            break;
+        case 'play':
+            play();
+            break;
+        case 'stop':
+            stop();
+            break;
+        case 'startRecord':
+            startRecord();
+            break;
+        case 'stopRecord':
+            stopRecord();
+            break;
+        case 'setRecordingsPath':
+            setRecordingsPath(msg.arg);
+            break;
     }
 
 });
 
-process.on('SIGINT', function () {
+process.on('SIGINT', () => {
     console.log('\nGot SIGINT (Ctrl-C)');
-    if(playing){
+    if (playing) {
         stop();
     }
     process.disconnect();

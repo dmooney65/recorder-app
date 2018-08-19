@@ -11,7 +11,7 @@ const wssServer = require('./wssServer.js');
 const { spawn, fork } = require('child_process');
 global.audioWorker = fork(__dirname + '/src/audioWorker.js', []);
 const settingsController = require('./src/settingsController');
-settingsController.get().then(function (settings) {
+settingsController.get().then((settings) => {
     global.audioWorker.send({ command: 'settings', arg: settings });
     if (settings.buttonControl) {
         if (settings.audioCard == 'generic' || settings.audioCard == 'audioinjector') {
@@ -24,6 +24,12 @@ settingsController.get().then(function (settings) {
             });
         }
     }
+}).catch(() => {
+    settingsController.createDefault().then(() => {
+        console.log('First run - create settings then exit\nPlease restart');
+        process.exit(0);
+    });
+
 });
 
 const index = require('./routes/indexRouter');
@@ -50,19 +56,19 @@ app.use('/settings', settingsRoute);
 app.use('/recordings', recordingsRoute);
 
 // Handle 404
-app.use(function (req, res) {
+app.use((req, res) => {
     res.status(404);
     res.render('404', { title: '404: File Not Found' });
 });
 
 // Handle 500
-app.use(function (error, req, res) {
+app.use((error, req, res) => {
     res.status(500);
     res.render('500', { title: '500: Internal Server Error', error: error });
 });
 
 const server = require('http').createServer(app);
-server.listen(3000, function listening() {
+server.listen(3000, listening = () => {
     console.log('Listening on %d', server.address().port, ' host', server.address().address);
 });
 

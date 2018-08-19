@@ -6,10 +6,10 @@ var spawn = require('child_process').spawnSync;
 var usb = require('../src/usbController');
 
 
-router.get('/', function (req, res) {
+router.get('/', (req, res) => {
     var localResp = files.readFiles(os.homedir() + '/Music/');
 
-    localResp.then(function (localResults) {
+    localResp.then( (localResults) => {
 
         var usbPath = (usb.getRecordingPath())
         if (usbPath.indexOf('media') > 0) {
@@ -19,10 +19,10 @@ router.get('/', function (req, res) {
                 //Errors here are probably permission related so ignore
             }
 
-            usbResp.then(function (usbResults) {
+            usbResp.then( (usbResults) => {
                 res.render('recordings', { 'localResults': localResults, 'usbResults': usbResults });
             });
-            usbResp.catch(function () {
+            usbResp.catch( ()  => {
                 console.log('Promise Rejected');
             });
         } else {
@@ -30,22 +30,22 @@ router.get('/', function (req, res) {
         }
     });
 
-    localResp.catch(function () {
+    localResp.catch( () => {
         console.log('Promise Rejected');
     });
 });
 
-router.get('/encode', function (req, res) {
+router.get('/encode', (req, res) => {
     files.encodeFile(req.query.file);
     res.redirect('/recordings');
 });
 
-router.get('/delete', function (req, res) {
+router.get('/delete', (req, res) => {
     files.deleteFile(req.query.file);
     res.redirect('/recordings');
 });
 
-router.get('/download', function (req, res) {
+router.get('/download', (req, res) => {
     var file = req.query.file;
     switch (true) {
         case (file.indexOf('flac') >= 0):

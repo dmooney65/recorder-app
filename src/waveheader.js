@@ -13,7 +13,7 @@
  * understand how to use the one above, so I made my own.
  * You propably wanna use that one
  */
-module.exports = function generateHeader(length, options) {
+module.exports = generateHeader = (length, options) => {
     options = options || {};
     var RIFF = new Buffer('RIFF');
     var WAVE = new Buffer('WAVE');

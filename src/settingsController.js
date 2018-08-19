@@ -2,46 +2,43 @@ const fs = require('fs');
 const path = require('path');
 const filePath = path.join(__dirname, '../settings.json');
 
-fs.readFileAsync = function (filename) {
-    return new Promise(function (resolve, reject) {
-        fs.readFile(filename, function (err, data) {
+fs.readFileAsync = ((filename) => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filename, (err, data) => {
             if (err)
                 reject(err);
             else
                 resolve(data);
         });
     });
-};
+});
 
-fs.writeFileAsync = function (filename, content) {
-    return new Promise(function (resolve, reject) {
-        fs.writeFile(filename, content, function (err) {
+fs.writeFileAsync = ((filename, content) => {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filename, content, (err) => {
             if (err)
                 reject(err);
             else
                 resolve();
         });
     });
-};
+});
 
 module.exports.get = () => {
     return fs.readFileAsync(filePath).then((data) => {
         var settings = JSON.parse(data);
         return settings;
-    });//.catch((error) => {
-    //console.log(error);
-
-    //});
+    })
 };
 
-let createDefault = () => {
+module.exports.createDefault = () => {
     var settings;
     var captureDevice = 'hw:0,0';
     var playbackDevice = 'default';
     var audioCard = 'generic';
     var native24bit = 'false';
     var cmdline = 'ls /sys/bus/platform/drivers | grep "pisound\\|audioinj"';
-    require('child_process').exec(cmdline, function (error, stdout, stderr) {
+    require('child_process').exec(cmdline, (error, stdout, stderr) => {
         if (error) {
             console.log(stderr);
         }
@@ -59,7 +56,7 @@ let createDefault = () => {
         'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false,
         'playbackDevice': playbackDevice, 'audioCard': audioCard, 'buttonControl': false
     };
-    fs.writeFileAsync(filePath, JSON.stringify(settings)).then((err) => {
+    return fs.writeFileAsync(filePath, JSON.stringify(settings)).then((err) => {
         if (err) throw err;
         global.audioWorker.send({ command: 'settings', arg: settings });
     });

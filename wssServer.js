@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 var wss;
 module.exports.WebsocketServer = () => {
 
-    global.audioWorker.on('message', function (msg) {
+    global.audioWorker.on('message', (msg) => {
         wss.broadcast(msg);
     });
     global.audioWorker.send({ command: 'getStatus' });
@@ -11,15 +11,15 @@ module.exports.WebsocketServer = () => {
 
         wss = new WebSocket.Server({ server });
         wss.on('error', () => console.log('wss errored'));
-        wss.broadcast = function broadcast(data) {
-            wss.clients.forEach(function each(client) {
+        wss.broadcast = broadcast = (data) => {
+            wss.clients.forEach(each = (client) => {
                 if (client.readyState === WebSocket.OPEN) {
                     client.send(JSON.stringify(data));
                 }
             });
         };
-        wss.on('connection', function connection(client) {
-            client.on('message', function incoming(msg) {
+        wss.on('connection', connection = (client) => {
+            client.on('message', incoming = (msg) => {
                 if (msg == 'play') {
                     global.audioWorker.send({ command: 'play' });
                 } else if (msg == 'stop') {
