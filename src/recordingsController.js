@@ -1,43 +1,43 @@
 const fs = require('fs');
-var mediaInfo = require('mediainfo-wrapper');
+var mediaInfo = require('node-mediainfolib');
+var glob = require('glob');
 const { spawn } = require('child_process');
 const settingsController = require('./settingsController.js');
+const path = require("path");
+
 
 module.exports.readFiles = (dir) => {
 
-    return mediaInfo({ maxBuffer: 5000 * 1024, cwd: dir }, '**/*.flac', '**/*.wav', '**/*.mp3').then((data) => {
-        var ret = [];
-        for (var i in data) {
-            var fullPath = dir + data[i].file;
-            var fileName = fullPath.split('\\').pop().split('/').pop();
-            var filePath = fullPath.replace(fileName, '');
+    return new Promise((resolve, reject) => {
+        glob('**/*.+(flac|wav|mp3)', { cwd: dir, realpath: true, strict: false, silent: true }, (err, data) => {
+            if (err) return reject(err);
 
-            var item = {
-                'path': filePath, 'file': fileName
-            };
+            var items = []
+            var info = mediaInfo.getLocal(data, {
+                General: ['Duration/String3', 'FileSize/String'],
+                Audio: ['SamplingRate', 'BitDepth']
+            });
 
-            try {
-                item.duration = data[i].audio[0].duration[4].substr(0, 8);
-                item.fileSize = data[i].audio[0].stream_size[4];
-
-                if (fileName.indexOf('mp3') > 0) {
-                    item.bitRate = '16/' + data[i].audio[0].sampling_rate[0] / 1000;
+            for (var i = 0; i < info.length; i++) {
+                var file = info[i].File;
+                var item = {
+                    'path': path.dirname(file), 'file': path.basename(file)
+                };
+                item.duration = info[i].General.Duration_String3.substr(0, 8);
+                item.fileSize = info[i].General.FileSize_String;
+                if (file.indexOf('mp3') > 0) {
+                    item.bitRate = '16/' + info[i].Audio[0].SamplingRate / 1000;
                 } else {
-                    item.bitRate = data[i].audio[0].bit_depth[0] + '/'
-                        + data[i].audio[0].sampling_rate[0] / 1000;
+                    item.bitRate = info[i].Audio[0].BitDepth +
+                        '/' + info[i].Audio[0].SamplingRate / 1000;
+
                 }
-            } catch (e) {
-                //swallow minor errors at the file level
-                //console.log(e);
+                items.push(item);
             }
-
-            ret.push(item);
-
-        }
-        return (ret);
-    }).catch(() => { //console.log(e); 
-        return [];
+            return resolve(items);
+        });
     });
+
 };
 
 

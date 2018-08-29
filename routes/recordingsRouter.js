@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var files = require('../src/recordingsController');
 var os = require('os');
-var spawn = require('child_process').spawnSync;
+//var spawn = require('child_process').spawnSync;
 var usb = require('../src/usbController');
 
 
@@ -13,12 +13,8 @@ router.get('/', (req, res) => {
 
         var usbPath = (usb.getRecordingPath())
         if (usbPath.indexOf('media') > 0) {
-            try {
-                usbResp = files.readFiles(usbPath);
-            } catch (e) {
-                //Errors here are probably permission related so ignore
-            }
-
+            usbResp = files.readFiles(usbPath);
+            
             usbResp.then( (usbResults) => {
                 res.render('recordings', { 'localResults': localResults, 'usbResults': usbResults });
             });
@@ -58,11 +54,8 @@ router.get('/download', (req, res) => {
             res.setHeader('Content-Type', 'audio/mp3');
             break;
     }
-    /*if (file.indexOf('flac') >= 0) {
-        console.log('FLAC file');
-    }*/
+    
     console.log(res.getHeaders());
-    //res.setHeader('Content-Type', 'audio/flac');
     res.download(req.query.file);
 });
 

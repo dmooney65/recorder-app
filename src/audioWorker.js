@@ -79,19 +79,23 @@ let stop = () => {
 };
 
 let startRecord = () => {
-    var args = [path.join(__dirname, '/recordingsWorker.js'), recPath, JSON.stringify(settings)];
-    this.recordingsWorker = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
+    if (playing) {
+        var args = [path.join(__dirname, '/recordingsWorker.js'), recPath, JSON.stringify(settings)];
+        this.recordingsWorker = spawn(process.execPath, args, { stdio: ['pipe', 1, 2, 'ipc'] });
 
-    this.arecord.stdout.pipe(this.recordingsWorker.stdin);
-    recording = true;
+        this.arecord.stdout.pipe(this.recordingsWorker.stdin);
+        recording = true;
+    }
     broadcastStatus();
 };
 
 
 let stopRecord = () => {
-    this.arecord.stdout.unpipe(this.recordingsWorker.stdin);
-    this.recordingsWorker.send('end');
-    recording = false;
+    if (recording) {
+        this.arecord.stdout.unpipe(this.recordingsWorker.stdin);
+        this.recordingsWorker.send('end');
+        recording = false;
+    }
     broadcastStatus();
 };
 

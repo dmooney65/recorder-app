@@ -6,10 +6,11 @@ var filePath;
 var monitor = require('node-usb-detection');
 
 
-monitor.change(() => {
+monitor.change((device) => {
+    console.log("device changed:\n", device);
     setTimeout(() => {
         findRecordingPath();
-    }, 2000);
+    }, 3000);
 });
 
 var read = () => {
@@ -32,7 +33,6 @@ var read = () => {
 
 
 var findRecordingPath = () => {
-
     read().then((data) => {
         var resp;
         if (data.length > 0) {
@@ -42,6 +42,7 @@ var findRecordingPath = () => {
         }
         filePath = resp;
         global.audioWorker.send({ command: 'setRecordingsPath', arg: resp });
+        return resp;
     });
 };
 findRecordingPath();
