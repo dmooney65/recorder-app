@@ -21,9 +21,11 @@ module.exports.readFiles = (dir) => {
             for (var i = 0; i < info.length; i++) {
                 var file = info[i].File;
                 var item = {
-                    'path': path.dirname(file), 'file': path.basename(file)
+                    'path': path.dirname(file) + '/', 'file': path.basename(file)
                 };
-                item.duration = info[i].General.Duration_String3.substr(0, 8);
+                if (info[i].General.Duration_String3) {
+                    item.duration = info[i].General.Duration_String3.substr(0, 8);
+                }
                 item.fileSize = info[i].General.FileSize_String;
                 if (file.indexOf('mp3') > 0) {
                     item.bitRate = '16/' + info[i].Audio[0].SamplingRate / 1000;
