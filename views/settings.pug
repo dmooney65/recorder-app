@@ -15,11 +15,9 @@ block content
                     div.form-group
                         label.control-label(for="sampleRate") Bitdepth/Sample Rate
                         select.form-control(id="sampleRate")
-                            option(value="16/44100") 16bit 44.1 Khz                               
-                            option(value="16/48000") 16bit 48 Khz                               
-                            option(value="24/48000") 24bit 48 Khz
-                            option(value="24/96000") 24bit 96 Khz
-                            option(value="24/192000") 24bit 192 Khz
+                            -for(var i = 0; i<encodeRates.length; i++){
+                                option(value="#{encodeRates[i]}") #{encodeRates[i]}
+                            -}
                     div.form-group
                         label.control-label(for="mp3Rate") MP3 VBR Bitrate
                         select.form-control(id="mp3Rate")
@@ -39,7 +37,7 @@ block content
                         input#playbackDevice.form-control(type='text' value=settings.playbackDevice)
                         div.checkbox
                             label
-                                input(type="checkbox" id="native24Bit") 
+                                input(type="checkbox" id="native24Bit" disabled) 
                                 span 24bit Hardware Support     
                 fieldset
                     div.form-group
@@ -47,7 +45,15 @@ block content
 
             ul.list-group(id ="log")
     script.
-        document.getElementById('sampleRate').value=#{settings.bitDepth}+'/'+#{settings.sampleRate};
+        var textToFind=#{settings.bitDepth}+'/'+#{settings.sampleRate};
+        var dd = document.getElementById('sampleRate');
+        for (var i = 0; i < dd.options.length; i++) {
+            if (dd.options[i].text === textToFind) {
+                dd.selectedIndex = i;
+                break;
+            }
+        }
+        
         document.getElementById('mp3Rate').value=#{settings.mp3Rate};
         document.getElementById('highResFormat').value="#{settings.highResFormat}";
         document.getElementById('native24Bit').checked=#{settings.native24Bit};
