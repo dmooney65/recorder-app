@@ -3,10 +3,11 @@ var rl = require('readline');
 var path = require('path');
 var os = require('os');
 var filePath;
-var monitor = require('node-usb-detection');
+var monitor = require('usb-detection');
 
 
-monitor.change((device) => {
+
+monitor.on('change', (device) => {
     console.log("device changed:\n", device);
     setTimeout(() => {
         findRecordingPath();
@@ -45,8 +46,13 @@ var findRecordingPath = () => {
         return resp;
     });
 };
+monitor.startMonitoring();
 findRecordingPath();
 
 module.exports.getRecordingPath = () => {
     return filePath;
 };
+
+module.exports.stopMonitoring = () => {
+    monitor.stopMonitoring();
+}

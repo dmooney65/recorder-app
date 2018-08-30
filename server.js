@@ -72,12 +72,16 @@ server.listen(3000, listening = () => {
     console.log('Listening on %d', server.address().port, ' host', server.address().address);
 });
 
-server.on('error', () => console.log('server errored'));
+server.on('error', () => {
+    mediaPath.stopMonitoring();
+    console.log('server errored');
+});
 var wss = wssServer.WebsocketServer();
 wss.createServer(server);
 
 process.on('SIGINT', () => {
     console.log('\nShutting down from SIGINT (Ctrl-C)');
+    mediaPath.stopMonitoring();
     //Take care of exit weirdness on Pi
     if (process.arch == 'arm') {
         spawn('killall', ['node']);

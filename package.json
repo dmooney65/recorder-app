@@ -39,10 +39,10 @@
         "jquery": "^3.2.1",
         "morgan": "^1.9.0",
         "node-mediainfolib": "dmooney65/node-mediainfolib",
-        "node-usb-detection": "^1.0.2",
         "onoff": "^3.2.0",
         "pug": "^2.0.3",
         "serve-favicon": "^2.4.5",
+        "usb-detection": "^3.2.0",
         "ws": "^3.3.2"
     }
 }
