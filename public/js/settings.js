@@ -45,7 +45,6 @@ let initSettings = (function () {
     $('#save').click(function () {
         //e.preventDefault();
         var sampling = sampleRate.children("option").filter(":selected").text().split('/');
-        console.log(sampling);
         var action = {
             'command': 'set', 'bitDepth': sampling[0], 'sampleRate': sampling[1],
             'compressionLevel': 5, 'mp3Rate': mp3Rate.val(), 'captureDevice': captureDevice.val(),

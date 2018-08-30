@@ -1,39 +1,26 @@
 const fs = require('fs');
 const path = require('path');
 const filePath = path.join(__dirname, '../settings.json');
+const { promisify } = require('util');
+const readFileAsync = promisify(fs.readFile);
+const writeFileAsync = promisify(fs.writeFile);
 
-fs.readFileAsync = ((filename) => {
-    return new Promise((resolve, reject) => {
-        fs.readFile(filename, (err, data) => {
-            if (err) {
-                reject(err);
-            }
-            else {
-                resolve(data);
-            }
-        });
-    });
-});
-
-fs.writeFileAsync = ((filename, content) => {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(filename, content, (err) => {
-            if (err) {
-                reject();
-            }
-            else {
-                resolve();
-            }
-        });
-    });
-});
 
 module.exports.get = () => {
-    return fs.readFileAsync(filePath).then((data) => {
-        var settingsStr = data.toString('utf-8');
-        var settings = JSON.parse(settingsStr);
-        return settings;
-    });
+    try {
+        return readFileAsync(filePath, { encoding: 'utf8' }).then((data) => {
+            if (data) {
+                return JSON.parse(data);
+            }
+        })
+    } catch (err) {
+        console.log(err);
+        return readFileAsync(filePath, { encoding: 'utf8' }).then((data) => {
+            if (data) {
+                return JSON.parse(data);
+            }
+        })
+    }
 };
 
 module.exports.createDefault = () => {
@@ -61,18 +48,20 @@ module.exports.createDefault = () => {
         'native24Bit': native24bit, 'bitFormat': 'S16_LE', 'inputAs32': false,
         'playbackDevice': playbackDevice, 'audioCard': audioCard, 'buttonControl': false
     };
-    return fs.writeFileAsync(filePath, JSON.stringify(settings)).then((err) => {
+    return writeFileAsync(filePath, JSON.stringify(settings), { encoding: 'utf8' }).then((err) => {
         if (err) throw err;
+        console.log('settings to save: ', settings)
         global.audioWorker.send({ command: 'settings', arg: settings });
+        return settings;
     });
 
 };
 
 module.exports.save = (newSettings) => {
 
-    fs.readFileAsync(filePath).then((data) => {
+    readFileAsync(filePath).then((data) => {
 
-        var settings = JSON.parse(data.toString());
+        var settings = JSON.parse(data);
         for (var property in newSettings) {
             if (newSettings.hasOwnProperty(property)) {
                 settings[property] = newSettings[property];
@@ -90,9 +79,10 @@ module.exports.save = (newSettings) => {
             settings.bitFormat = 'S16_LE';
             settings.inputAs32 = false;
         }
-        fs.writeFileAsync(filePath, JSON.stringify(settings)).then((err) => {
+        writeFileAsync(filePath, JSON.stringify(settings), { encoding: 'utf8' }).then((err) => {
             if (err) throw err;
             global.audioWorker.send({ command: 'settings', arg: settings });
+            //return settings;
         });
 
     });
