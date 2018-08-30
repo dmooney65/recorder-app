@@ -7,20 +7,23 @@ const writeFileAsync = promisify(fs.writeFile);
 
 
 module.exports.get = () => {
-    try {
-        return readFileAsync(filePath, { encoding: 'utf8' }).then((data) => {
-            if (data) {
-                return JSON.parse(data);
-            }
-        })
-    } catch (err) {
+    return readFileAsync(filePath, { encoding: 'utf8' }).then((data) => {
+        if (data) {
+            return JSON.parse(data);
+        } else {
+            throw "could not open settings file 1"
+        }
+    }).catch((err) => {
         console.log(err);
         return readFileAsync(filePath, { encoding: 'utf8' }).then((data) => {
             if (data) {
                 return JSON.parse(data);
+            } else {
+                throw "could not open settings file 2"
             }
-        })
-    }
+        });
+
+    });
 };
 
 module.exports.createDefault = () => {
