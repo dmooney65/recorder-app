@@ -1,0 +1,14 @@
+extends layout
+
+block append head
+    script(defer src='/js/settings.js')
+
+block content
+    include nav.pug
+    
+    div.container
+        div.page-header Settings Error
+        p.small Cannot access audio card parameters. Is playing or recording in progress?
+
+        
+        
