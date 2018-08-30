@@ -19,7 +19,7 @@ fs.writeFileAsync = ((filename, content) => {
     return new Promise((resolve, reject) => {
         fs.writeFile(filename, content, (err) => {
             if (err) {
-                reject(err);
+                reject();
             }
             else {
                 resolve();
@@ -30,7 +30,8 @@ fs.writeFileAsync = ((filename, content) => {
 
 module.exports.get = () => {
     return fs.readFileAsync(filePath).then((data) => {
-        var settings = JSON.parse(data.toString());
+        var settingsStr = data.toString('utf-8');
+        var settings = JSON.parse(settingsStr);
         return settings;
     });
 };
