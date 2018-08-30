@@ -5,10 +5,12 @@ const filePath = path.join(__dirname, '../settings.json');
 fs.readFileAsync = ((filename) => {
     return new Promise((resolve, reject) => {
         fs.readFile(filename, (err, data) => {
-            if (err)
+            if (err) {
                 reject(err);
-            else
+            }
+            else {
                 resolve(data);
+            }
         });
     });
 });
@@ -16,19 +18,21 @@ fs.readFileAsync = ((filename) => {
 fs.writeFileAsync = ((filename, content) => {
     return new Promise((resolve, reject) => {
         fs.writeFile(filename, content, (err) => {
-            if (err)
+            if (err) {
                 reject(err);
-            else
+            }
+            else {
                 resolve();
+            }
         });
     });
 });
 
 module.exports.get = () => {
     return fs.readFileAsync(filePath).then((data) => {
-        var settings = JSON.parse(data);
+        var settings = JSON.parse(data.toString());
         return settings;
-    })
+    });
 };
 
 module.exports.createDefault = () => {
@@ -67,7 +71,7 @@ module.exports.save = (newSettings) => {
 
     fs.readFileAsync(filePath).then((data) => {
 
-        var settings = JSON.parse(data);
+        var settings = JSON.parse(data.toString());
         for (var property in newSettings) {
             if (newSettings.hasOwnProperty(property)) {
                 settings[property] = newSettings[property];
