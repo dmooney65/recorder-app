@@ -25,12 +25,7 @@ settingsController.get().then((settings) => {
         }
     }
 }).catch(() => {
-    settingsController.createDefault().then(() => {
-        mediaPath.stopMonitoring();
-        console.log('First run - create settings then exit\nPlease restart');
-        process.exit(0);
-    });
-
+    settingsController.createDefault();
 });
 
 const index = require('./routes/indexRouter');
