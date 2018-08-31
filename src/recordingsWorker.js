@@ -60,5 +60,9 @@ process.on('message', () => {
     });
 });
 
-process.stdin.pipe(fileWriter);
+//Fix for XRUNs when recording 32/192 
+//process.stdin.pipe(fileWriter);
+process.stdin.on('data', (data) =>{
+    fileWriter.write(data);
+});
 
