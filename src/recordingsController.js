@@ -1,7 +1,7 @@
 const fs = require('fs');
-var mediaInfo = require('node-mediainfolib');
-var glob = require('glob');
-const { spawn } = require('child_process');
+const mediaInfo = require('node-mediainfolib');
+const glob = require('glob');
+const { fork, spawn } = require('child_process');
 const settingsController = require('./settingsController.js');
 const path = require("path");
 
@@ -41,7 +41,6 @@ module.exports.readFiles = (dir) => {
             return resolve(items);
         });
     });
-
 };
 
 
@@ -56,13 +55,8 @@ module.exports.encodeFile = (file) => {
         var transcode;
         console.log('Transcoding file: ', file);
         if (file.indexOf('wav') > 0) {
-            transcode = spawn(
-                'ffmpeg', ['-i', file, '-codec:a', 'flac',
-                    '-compression_level', settings.compressionLevel, file.replace('.wav', '.flac')],
-                {
-                    stdio: 'ignore'
-                }
-            );
+            var args = [file, settings.compressionLevel];
+            var transcode = fork(__dirname + '/transcodeWorker.js', args);
         } else {
             transcode = spawn(
                 'ffmpeg', ['-i', file, '-codec:a', 'libmp3lame',
