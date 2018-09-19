@@ -19,7 +19,7 @@ module.exports.readFiles = (dir) => {
             });
 
             for (var i = 0; i < info.length; i++) {
-                var file = info[i].File;
+                var file = data[i];
                 var item = {
                     'path': path.dirname(file) + '/', 'file': path.basename(file)
                 };
